@@ -62,7 +62,7 @@ If you wish to make more impactful changes such as which workflows are built and
 
 - `use_bespoke`: Some workflows benefit from a dedicated workflow template as they drift away from the main template. Set to `true` if the workflow requires a *bespoke* template and ensure a template `workflow_name.yml.j2` is present.
 
-The following will override `workflows` to ensure only `Build Kayobe Image` and `Run Kolla Config Diff` is generated.
+The following will override `github_workflows` to ensure only `Build Kayobe Image` and `Run Kolla Config Diff` is generated.
 
 ```yaml
 github_workflows:
@@ -83,7 +83,7 @@ There are currently three hooks available
 
 - `github_final_hook`: a hook that occurs after the kayobe automation task has finished.
 
-A hook must be defined within the variables file for the playbook should be a scalar block string.
+A hook must be defined as a variable and should be a scalar block string.
 
 ```yaml
 github_checkout_hook: |
