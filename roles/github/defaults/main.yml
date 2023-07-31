@@ -39,38 +39,38 @@ github_combined_inputs: &github_combined_inputs
   <<: [*github_kayobe_inputs, *github_kolla_inputs]
 
 github_workflows:
-  - "{{ build_kayobe_image }}"
-  - "{{ run_kolla_config_diff }}"
-  - "{{ run_infra_vm_host_configure }}"
-  - "{{ run_infra_vm_host_package_update }}"
-  - "{{ run_infra_vm_provision }}"
-  - "{{ run_infra_vm_service_deploy }}"
-  - "{{ run_network_connectivity_check }}"
-  - "{{ run_overcloud_container_image_pull }}"
-  - "{{ run_overcloud_database_backup }}"
-  - "{{ run_overcloud_host_configure }}"
-  - "{{ run_overcloud_host_package_update }}"
-  - "{{ run_overcloud_inventory_discover }}"
-  - "{{ run_overcloud_provision }}"
-  - "{{ run_overcloud_service_deploy }}"
-  - "{{ run_overcloud_service_upgrade }}"
-  - "{{ run_seed_host_configure }}"
-  - "{{ run_seed_host_package_update }}"
-  - "{{ run_seed_hypervisor_host_configure }}"
-  - "{{ run_seed_hypervisor_host_package_update }}"
-  - "{{ run_seed_service_deploy }}"
-  - "{{ run_seed_vm_provision }}"
-  - "{{ run_tempest }}"
+  - "{{ github_build_kayobe_image }}"
+  - "{{ github_run_kolla_config_diff }}"
+  - "{{ github_run_infra_vm_host_configure }}"
+  - "{{ github_run_infra_vm_host_package_update }}"
+  - "{{ github_run_infra_vm_provision }}"
+  - "{{ github_run_infra_vm_service_deploy }}"
+  - "{{ github_run_network_connectivity_check }}"
+  - "{{ github_run_overcloud_container_image_pull }}"
+  - "{{ github_run_overcloud_database_backup }}"
+  - "{{ github_run_overcloud_host_configure }}"
+  - "{{ github_run_overcloud_host_package_update }}"
+  - "{{ github_run_overcloud_inventory_discover }}"
+  - "{{ github_run_overcloud_provision }}"
+  - "{{ github_run_overcloud_service_deploy }}"
+  - "{{ github_run_overcloud_service_upgrade }}"
+  - "{{ github_run_seed_host_configure }}"
+  - "{{ github_run_seed_host_package_update }}"
+  - "{{ github_run_seed_hypervisor_host_configure }}"
+  - "{{ github_run_seed_hypervisor_host_package_update }}"
+  - "{{ github_run_seed_service_deploy }}"
+  - "{{ github_run_seed_vm_provision }}"
+  - "{{ github_run_tempest }}"
 
-build_kayobe_image:
+github_build_kayobe_image:
   file_name: build-kayobe-docker-image.yml
   use_bespoke: true
 
-run_kolla_config_diff:
+github_run_kolla_config_diff:
   file_name: run-config-diff.yml
   use_bespoke: true
 
-run_infra_vm_host_configure:
+github_run_infra_vm_host_configure:
   file_name: run-infra-vm-host-configure.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -79,7 +79,7 @@ run_infra_vm_host_configure:
     - KAYOBE_LIMIT
     - HOME
 
-run_infra_vm_host_package_update:
+github_run_infra_vm_host_package_update:
   file_name: run-infra-vm-host-package-update.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -88,7 +88,7 @@ run_infra_vm_host_package_update:
     - KAYOBE_LIMIT
     - HOME
 
-run_infra_vm_provision:
+github_run_infra_vm_provision:
   file_name: run-infra-vm-provision.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -97,7 +97,7 @@ run_infra_vm_provision:
     - KAYOBE_LIMIT
     - HOME
 
-run_infra_vm_service_deploy:
+github_run_infra_vm_service_deploy:
   file_name: run-infra-vm-service-deploy.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -106,7 +106,7 @@ run_infra_vm_service_deploy:
     - KAYOBE_LIMIT
     - HOME
 
-run_network_connectivity_check:
+github_run_network_connectivity_check:
   file_name: run-network-connectivity-check.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -115,7 +115,7 @@ run_network_connectivity_check:
     - KAYOBE_LIMIT
     - HOME
 
-run_overcloud_container_image_pull:
+github_run_overcloud_container_image_pull:
   file_name: run-overcloud-container-image-pull.yml
   trigger:
     workflow_dispatch: *github_combined_inputs
@@ -126,7 +126,7 @@ run_overcloud_container_image_pull:
     - KAYOBE_LIMIT
     - HOME
 
-run_overcloud_database_backup:
+github_run_overcloud_database_backup:
   file_name: run-overcloud-database-backup.yml
   trigger:
     workflow_dispatch: *github_combined_inputs
@@ -137,7 +137,7 @@ run_overcloud_database_backup:
     - KAYOBE_LIMIT
     - HOME
 
-run_overcloud_host_configure:
+github_run_overcloud_host_configure:
   file_name: run-overcloud-host-configure.yml
   trigger:
     workflow_dispatch: *github_combined_inputs
@@ -148,7 +148,7 @@ run_overcloud_host_configure:
     - KAYOBE_LIMIT
     - HOME
 
-run_overcloud_host_package_update:
+github_run_overcloud_host_package_update:
   file_name: run-overcloud-host-package-update.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -157,7 +157,7 @@ run_overcloud_host_package_update:
     - KAYOBE_LIMIT
     - HOME
 
-run_overcloud_inventory_discover:
+github_run_overcloud_inventory_discover:
   file_name: run-overcloud-inventory-discover.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -173,7 +173,7 @@ run_overcloud_inventory_discover:
     - KAYOBE_AUTOMATION_PR_URL
     - HOME
 
-run_overcloud_provision:
+github_run_overcloud_provision:
   file_name: run-overcloud-provision.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -182,7 +182,7 @@ run_overcloud_provision:
     - KAYOBE_LIMIT
     - HOME
 
-run_overcloud_service_deploy:
+github_run_overcloud_service_deploy:
   file_name: run-overcloud-service-deploy.yml
   trigger:
     workflow_dispatch: *github_combined_inputs
@@ -200,7 +200,7 @@ run_overcloud_service_deploy:
     - KAYOBE_AUTOMATION_PR_URL
     - HOME
 
-run_overcloud_service_upgrade:
+github_run_overcloud_service_upgrade:
   file_name: run-overcloud-service-upgrade.yml
   trigger:
     workflow_dispatch: *github_combined_inputs
@@ -218,7 +218,7 @@ run_overcloud_service_upgrade:
     - KAYOBE_AUTOMATION_PR_URL
     - HOME
 
-run_seed_host_configure:
+github_run_seed_host_configure:
   file_name: run-seed-host-configure.yml
   trigger:
     workflow_dispatch: *github_combined_inputs
@@ -229,7 +229,7 @@ run_seed_host_configure:
     - KAYOBE_LIMIT
     - HOME
 
-run_seed_host_package_update:
+github_run_seed_host_package_update:
   file_name: run-seed-host-package-update.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -238,7 +238,7 @@ run_seed_host_package_update:
     - KAYOBE_LIMIT
     - HOME
 
-run_seed_hypervisor_host_configure:
+github_run_seed_hypervisor_host_configure:
   file_name: run-seed-hypervisor-host-configure.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -247,7 +247,7 @@ run_seed_hypervisor_host_configure:
     - KAYOBE_LIMIT
     - HOME
 
-run_seed_hypervisor_host_package_update:
+github_run_seed_hypervisor_host_package_update:
   file_name: run-seed-hypervisor-host-package-update.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -256,7 +256,7 @@ run_seed_hypervisor_host_package_update:
     - KAYOBE_LIMIT
     - HOME
 
-run_seed_service_deploy:
+github_run_seed_service_deploy:
   file_name: run-seed-service-deploy.yml
   trigger:
     workflow_dispatch: *github_combined_inputs
@@ -274,7 +274,7 @@ run_seed_service_deploy:
     - KAYOBE_AUTOMATION_PR_URL
     - HOME
 
-run_seed_vm_provision:
+github_run_seed_vm_provision:
   file_name: run-seed-vm-provision.yml
   trigger:
     workflow_dispatch: *github_kayobe_inputs
@@ -283,6 +283,6 @@ run_seed_vm_provision:
     - KAYOBE_LIMIT
     - HOME
 
-run_tempest:
+github_run_tempest:
   file_name: run-tempest.yml
   use_bespoke: true
