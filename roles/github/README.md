@@ -60,7 +60,9 @@ If you wish to make more impactful changes such as which workflows are built and
 
 - `arguments`: list of arguments keys used by the automation task the contents will be acquired from `kayobe_arguments` or the defaults.
 
-- `use_bespoke`: Some workflows benefit from a dedicated workflow template as they drift away from the main template. Set to `true` if the workflow requires a *bespoke* template and ensure a template `workflow_name.yml.j2` is present.
+- `path_override`: Some workflows benefit from a dedicated workflow template as the `generic.yml.j2` cannot meet the requirements of all workflows. Therefore it might be beneficial to create specific templates within the `{{ playbook_dir }}/templates/` directory and set this variable to that specific path.
+
+- `use_bespoke`: As mentioned in `path_override` some workflows require a more specific template to meet their needs. Setting this to true would create a workflow from a bespoke template if one exists within the roles `templates` directory. Note this is intended for **internal use only**.
 
 The following will override `github_workflows` to ensure only `Build Kayobe Image` and `Run Kolla Config Diff` is generated.
 
@@ -69,6 +71,16 @@ github_workflows:
   - "{{ build_kayobe_image }}"
   - "{{ run_kolla_config_diff }}"
 ```
+
+In the following example `github_build_kayobe_image` has been changed to use a user provided template stored within their `{{ playbook_dir }}/templates`
+
+```yaml
+github_build_kayobe_image:
+  file_name: build-kayobe-docker-image.yml
+  path_override: "{{ playbook_dir }}/templates/build-kayobe-docker-image.yml.j2"
+```
+
+
 
 Template Hooks
 --------------

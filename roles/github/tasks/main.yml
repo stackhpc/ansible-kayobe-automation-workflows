@@ -7,7 +7,7 @@
 
 - name: Ensure workflow file exists
   ansible.builtin.template:
-    src: "workflow.yml.j2"
+    src: "{{ workflow.path_override | default('workflow.yml.j2') }}"
     dest: "{{ github_output_directory }}/{{ workflow.file_name }}"
     block_start_string: "<%"
     block_end_string: "%>"
