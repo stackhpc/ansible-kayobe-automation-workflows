@@ -1,15 +1,25 @@
 ---
-output_directory: .github/workflows
+github_output_directory: .github/workflows
 
-runner_name: self-hosted
+github_runs_on: self-hosted
 
-image_url: ghcr.io/${{ github.repository }}:latest
+github_registry_url: ghcr.io
 
-registry_password: ${{ secrets.GITHUB_TOKEN }}
+github_registry_username: ${{ github.actor }}
 
-kayobe_arguments: []
+github_registry_password: ${{ secrets.GITHUB_TOKEN }}
 
-kayobe_inputs: &kayobe_inputs
+github_image_name: ${{ github.repository }}:latest
+
+github_kayobe_arguments: {}
+
+github_checkout_hook: ""
+
+github_kayobe_hook: ""
+
+github_final_hook: ""
+
+github_kayobe_inputs: &github_kayobe_inputs
   kayobeLimit:
     description: |
       The ansible limit to use when running kayobe playbooks.
@@ -17,7 +27,7 @@ kayobe_inputs: &kayobe_inputs
     description: |
       The ansible tags to use when running kayobe playbooks.
 
-kolla_inputs: &kolla_inputs
+github_kolla_inputs: &github_kolla_inputs
   kollaLimit:
     description: |
       The ansible limit to use for kolla-ansible playbooks.
@@ -25,249 +35,254 @@ kolla_inputs: &kolla_inputs
     description: |
       The ansible tags to use when running kolla-ansible playbooks.
 
-combined_inputs: &combined_inputs
-  <<: [ *kayobe_inputs, *kolla_inputs ]
+github_combined_inputs: &github_combined_inputs
+  <<: [*github_kayobe_inputs, *github_kolla_inputs]
 
-workflows:
-  - name: Build kayobe image
-    file_name: build-kayobe-docker-image.yml
-    use_bespoke: true
+github_workflows:
+  - "{{ github_build_kayobe_image }}"
+  - "{{ github_run_kolla_config_diff }}"
+  - "{{ github_run_infra_vm_host_configure }}"
+  - "{{ github_run_infra_vm_host_package_update }}"
+  - "{{ github_run_infra_vm_provision }}"
+  - "{{ github_run_infra_vm_service_deploy }}"
+  - "{{ github_run_network_connectivity_check }}"
+  - "{{ github_run_overcloud_container_image_pull }}"
+  - "{{ github_run_overcloud_database_backup }}"
+  - "{{ github_run_overcloud_host_configure }}"
+  - "{{ github_run_overcloud_host_package_update }}"
+  - "{{ github_run_overcloud_inventory_discover }}"
+  - "{{ github_run_overcloud_provision }}"
+  - "{{ github_run_overcloud_service_deploy }}"
+  - "{{ github_run_overcloud_service_upgrade }}"
+  - "{{ github_run_seed_host_configure }}"
+  - "{{ github_run_seed_host_package_update }}"
+  - "{{ github_run_seed_hypervisor_host_configure }}"
+  - "{{ github_run_seed_hypervisor_host_package_update }}"
+  - "{{ github_run_seed_service_deploy }}"
+  - "{{ github_run_seed_vm_provision }}"
+  - "{{ github_run_tempest }}"
 
-  - name: Generate kolla config diff
-    file_name: run-config-diff.yml
-    use_bespoke: true
+github_build_kayobe_image:
+  file_name: build-kayobe-docker-image.yml
+  use_bespoke: true
 
-  - name: Run infra VM host configure
-    file_name: run-infra-vm-host-configure.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_kolla_config_diff:
+  file_name: run-config-diff.yml
+  use_bespoke: true
 
-  - name: Run infra VM host package update
-    file_name: run-infra-vm-host-package-update.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_infra_vm_host_configure:
+  file_name: run-infra-vm-host-configure.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run infra VM provision
-    file_name: run-infra-vm-provision.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_infra_vm_host_package_update:
+  file_name: run-infra-vm-host-package-update.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run infra VM service deploy
-    file_name: run-infra-vm-service-deploy.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_infra_vm_provision:
+  file_name: run-infra-vm-provision.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run network connectivity check
-    file_name: run-network-connectivity-check.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_infra_vm_service_deploy:
+  file_name: run-infra-vm-service-deploy.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run overcloud container image pull
-    file_name: run-overcloud-container-image-pull.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_network_connectivity_check:
+  file_name: run-network-connectivity-check.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run overcloud database backup
-    file_name: run-overcloud-database-backup.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_overcloud_container_image_pull:
+  file_name: run-overcloud-container-image-pull.yml
+  trigger:
+    workflow_dispatch: *github_combined_inputs
+  arguments:
+    - KOLLA_TAGS
+    - KOLLA_LIMIT
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run overcloud host configure
-    file_name: run-overcloud-host-configure.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_overcloud_database_backup:
+  file_name: run-overcloud-database-backup.yml
+  trigger:
+    workflow_dispatch: *github_combined_inputs
+  arguments:
+    - KOLLA_TAGS
+    - KOLLA_LIMIT
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run overcloud host package update
-    file_name: run-overcloud-host-package-update.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_overcloud_host_configure:
+  file_name: run-overcloud-host-configure.yml
+  trigger:
+    workflow_dispatch: *github_combined_inputs
+  arguments:
+    - KOLLA_TAGS
+    - KOLLA_LIMIT
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run overcloud inventory discover
-    file_name: run-overcloud-inventory-discover.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-      - KAYOBE_AUTOMATION_PR_REMOTE
-      - KAYOBE_AUTOMATION_PR_GITHUB_USER
-      - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-      - KAYOBE_AUTOMATION_PR_TYPE
-      - KAYOBE_AUTOMATION_PR_TITLE
-      - KAYOBE_AUTOMATION_PR_URL
-      - HOME
+github_run_overcloud_host_package_update:
+  file_name: run-overcloud-host-package-update.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run overcloud provision
-    file_name: run-overcloud-provision.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_overcloud_inventory_discover:
+  file_name: run-overcloud-inventory-discover.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
+    - KAYOBE_AUTOMATION_PR_REMOTE
+    - KAYOBE_AUTOMATION_PR_GITHUB_USER
+    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
+    - KAYOBE_AUTOMATION_PR_TYPE
+    - KAYOBE_AUTOMATION_PR_TITLE
+    - KAYOBE_AUTOMATION_PR_URL
+    - HOME
 
-  - name: Run overcloud service deploy
-    file_name: run-overcloud-service-deploy.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-      - KAYOBE_AUTOMATION_PR_REMOTE
-      - KAYOBE_AUTOMATION_PR_GITHUB_USER
-      - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-      - KAYOBE_AUTOMATION_PR_TYPE
-      - KAYOBE_AUTOMATION_PR_TITLE
-      - KAYOBE_AUTOMATION_PR_URL
-      - HOME
+github_run_overcloud_provision:
+  file_name: run-overcloud-provision.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run overcloud service reconfigure
-    file_name: run-overcloud-service-reconfigure.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-      - KAYOBE_AUTOMATION_PR_REMOTE
-      - KAYOBE_AUTOMATION_PR_GITHUB_USER
-      - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-      - KAYOBE_AUTOMATION_PR_TYPE
-      - KAYOBE_AUTOMATION_PR_TITLE
-      - KAYOBE_AUTOMATION_PR_URL
-      - HOME
+github_run_overcloud_service_deploy:
+  file_name: run-overcloud-service-deploy.yml
+  trigger:
+    workflow_dispatch: *github_combined_inputs
+  arguments:
+    - KOLLA_TAGS
+    - KOLLA_LIMIT
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
+    - KAYOBE_AUTOMATION_PR_REMOTE
+    - KAYOBE_AUTOMATION_PR_GITHUB_USER
+    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
+    - KAYOBE_AUTOMATION_PR_TYPE
+    - KAYOBE_AUTOMATION_PR_TITLE
+    - KAYOBE_AUTOMATION_PR_URL
+    - HOME
 
-  - name: Run overcloud service upgrade
-    file_name: run-overcloud-service-upgrade.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-      - KAYOBE_AUTOMATION_PR_REMOTE
-      - KAYOBE_AUTOMATION_PR_GITHUB_USER
-      - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-      - KAYOBE_AUTOMATION_PR_TYPE
-      - KAYOBE_AUTOMATION_PR_TITLE
-      - KAYOBE_AUTOMATION_PR_URL
-      - HOME
+github_run_overcloud_service_upgrade:
+  file_name: run-overcloud-service-upgrade.yml
+  trigger:
+    workflow_dispatch: *github_combined_inputs
+  arguments:
+    - KOLLA_TAGS
+    - KOLLA_LIMIT
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
+    - KAYOBE_AUTOMATION_PR_REMOTE
+    - KAYOBE_AUTOMATION_PR_GITHUB_USER
+    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
+    - KAYOBE_AUTOMATION_PR_TYPE
+    - KAYOBE_AUTOMATION_PR_TITLE
+    - KAYOBE_AUTOMATION_PR_URL
+    - HOME
 
-  - name: Run seed host configure
-    file_name: run-seed-host-configure.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_seed_host_configure:
+  file_name: run-seed-host-configure.yml
+  trigger:
+    workflow_dispatch: *github_combined_inputs
+  arguments:
+    - KOLLA_TAGS
+    - KOLLA_LIMIT
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run seed host package update
-    file_name: run-seed-host-package-update.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_seed_host_package_update:
+  file_name: run-seed-host-package-update.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run seed hypervisor host configure
-    file_name: run-seed-hypervisor-host-configure.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_seed_hypervisor_host_configure:
+  file_name: run-seed-hypervisor-host-configure.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run seed hypervisor host package update
-    file_name: run-seed-hypervisor-host-package-update.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_seed_hypervisor_host_package_update:
+  file_name: run-seed-hypervisor-host-package-update.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run seed service deploy
-    file_name: run-seed-service-deploy.yml
-    trigger:
-      workflow_dispatch: *combined_inputs
-    arguments:
-      - KOLLA_TAGS
-      - KOLLA_LIMIT
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-      - KAYOBE_AUTOMATION_PR_REMOTE
-      - KAYOBE_AUTOMATION_PR_GITHUB_USER
-      - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-      - KAYOBE_AUTOMATION_PR_TYPE
-      - KAYOBE_AUTOMATION_PR_TITLE
-      - KAYOBE_AUTOMATION_PR_URL
-      - HOME
+github_run_seed_service_deploy:
+  file_name: run-seed-service-deploy.yml
+  trigger:
+    workflow_dispatch: *github_combined_inputs
+  arguments:
+    - KOLLA_TAGS
+    - KOLLA_LIMIT
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
+    - KAYOBE_AUTOMATION_PR_REMOTE
+    - KAYOBE_AUTOMATION_PR_GITHUB_USER
+    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
+    - KAYOBE_AUTOMATION_PR_TYPE
+    - KAYOBE_AUTOMATION_PR_TITLE
+    - KAYOBE_AUTOMATION_PR_URL
+    - HOME
 
-  - name: Run seed VM provision
-    file_name: run-seed-vm-provision.yml
-    trigger:
-      workflow_dispatch: *kayobe_inputs
-    arguments:
-      - KAYOBE_TAGS
-      - KAYOBE_LIMIT
-      - HOME
+github_run_seed_vm_provision:
+  file_name: run-seed-vm-provision.yml
+  trigger:
+    workflow_dispatch: *github_kayobe_inputs
+  arguments:
+    - KAYOBE_TAGS
+    - KAYOBE_LIMIT
+    - HOME
 
-  - name: Run tempest
-    file_name: run-tempest.yml
-    use_bespoke: true
+github_run_tempest:
+  file_name: run-tempest.yml
+  use_bespoke: true

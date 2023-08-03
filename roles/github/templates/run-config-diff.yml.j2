@@ -1,4 +1,4 @@
-name: Generate kolla config diff
+name: %% format_file_name(workflow.file_name, is_title=true) %%
 
 concurrency:
   group: kolla-diff-${{ github.head_ref }}
@@ -8,17 +8,20 @@ on:
   pull_request:
 
 jobs:
-  config-diff:
-    runs-on: %% runner_name %%
+  %% format_file_name(workflow.file_name) %%:
+    runs-on: %% github_runs_on %%
     permissions:
       contents: read
       packages: read
     container:
-      image: ghcr.io/${{ github.repository }}:latest
+      image: %% github_registry_url %%/%% github_image_name %%
       credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        username: %% github_registry_username %%
+        password: %% github_registry_password %%
     steps:
+<% if github_checkout_hook | length >= 1 %>
+      %% github_checkout_hook | indent(width=6, first=false) %%
+<% endif %>
       - name: Checkout kayobe config
         uses: actions/checkout@v3
         with:
@@ -26,6 +29,9 @@ jobs:
            fetch-depth: 0
            ref: ${{ github.ref }}
 
+<% if github_kayobe_hook | length >= 1 %>
+      %% github_kayobe_hook | indent(width=6, first=false) %%
+<% endif %>
       - name: Copy checkout to expected location
         run: |
             sudo cp -rf $GITHUB_WORKSPACE/ /src
@@ -35,10 +41,10 @@ jobs:
         run: |
             sudo -E -u stack bash -c '/src/.automation/pipeline/config-diff.sh ${{ github.event.pull_request.base.sha }}'
         env:
-          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_VAULT_PASSWORD: '%% kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
-          HOME: '%% kayobe_arguments.HOME | default(_kayobe_arguments.HOME) %%'
+          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_VAULT_PASSWORD: '%% kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+          HOME: '%% kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
 
       - name: Show summary of changes
         run: |
@@ -47,3 +53,6 @@ jobs:
       - name: Print diff
         run: |
           cat /tmp/kayobe-config-diff
+<% if github_final_hook | length >= 1 +%>
+      %% github_final_hook | indent(width=6, first=false) -%%
+<% endif %>

@@ -1,5 +1,5 @@
 ---
-_kayobe_arguments:
+default_kayobe_arguments:
   KAYOBE_ENVIRONMENT: production
   KAYOBE_VAULT_PASSWORD: "${{ secrets.KAYOBE_VAULT_PASSWORD }}"
   KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "${{ secrets.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY }}"

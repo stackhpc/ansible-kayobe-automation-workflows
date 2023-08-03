@@ -1,43 +1,41 @@
 <% include "header.yml.j2" +%>
 
 jobs:
-  %% workflow.file_name[4:-4] %%:
-    runs-on: %% runner_name %%
+  %% format_file_name(workflow.file_name) %%:
+    runs-on: %% github_runs_on %%
     permissions:
       contents: read
       packages: read
     container:
-      image: %% image_url %%
+      image: %% github_registry_url %%/%% github_image_name %%
       credentials:
-        username: ${{ github.actor }}
-        password: %% registry_password %%
+        username: %% github_registry_username %%
+        password: %% github_registry_password %%
     steps:
-<%- filter indent(width=6,first=False) +%>
-<%- include "hooks/pre-checkout.yml.j2" ignore missing +%>
-<% endfilter %>
+<% if github_checkout_hook | length >= 1 %>
+      %% github_checkout_hook | indent(width=6, first=false) %%
+<% endif %>
       - name: Checkout kayobe config
         uses: actions/checkout@v3
         with:
           submodules: true
-<%- filter indent(width=6,first=False) +%>
-<% include "hooks/pre-checkout.yml.j2" ignore missing +%>
-<% endfilter %>
+
+<% if github_kayobe_hook | length >= 1 %>
+      %% github_kayobe_hook | indent(width=6, first=false) %%
+<% endif %>
       - name: Symlink source checkout to expected location
         run: sudo ln -s $PWD /src
 
-<%- filter indent(width=6,first=False) +%>
-<% include "hooks/pre-automation-task.yml.j2" ignore missing +%>
-<% endfilter %>
-      - name: %% workflow.file_name[:-4] | replace('-', ' ') | capitalize %%
+      - name: %% format_file_name(workflow.file_name, is_subtitle=true)  %%
         run: |
           /src/.automation/pipeline/%% workflow.file_name[4:-4] %%.sh
         <%- if workflow.arguments is defined +%>
         env:
-          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
           <%- for argument in workflow.arguments +%>
-          %% argument %%: '%% kayobe_arguments[argument] | default(_kayobe_arguments[argument]) %%'
+          %% argument %%: '%% kayobe_arguments[argument] | default(default_kayobe_arguments[argument]) %%'
           <%- endfor +%>
         <%- endif +%>
-<%- filter indent(width=6,first=False) +%>
-<% include "hooks/post-automation-task.yml.j2" ignore missing %>
-<% endfilter -%>
+<% if github_final_hook | length >= 1 +%>
+      %% github_final_hook | indent(width=6, first=false) -%%
+<% endif %>

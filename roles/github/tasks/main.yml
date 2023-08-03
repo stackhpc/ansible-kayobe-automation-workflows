@@ -1,20 +1,20 @@
 ---
-  - name: Ensure output directory exists
-    ansible.builtin.file:
-      dest: "{{ output_directory }}"
-      state: directory
-      mode: "0700"
+- name: Ensure output directory exists
+  ansible.builtin.file:
+    dest: "{{ github_output_directory }}"
+    state: directory
+    mode: "755"
 
-  - name: Ensure workflow file exists
-    ansible.builtin.template:
-      src: "workflow.yml.j2"
-      dest: "{{ output_directory }}/{{ workflow.file_name }}"
-      block_start_string: "<%"
-      block_end_string: "%>"
-      variable_start_string: "%%"
-      variable_end_string: "%%"
-      mode: "0644"
-    loop: "{{ workflows }}"
-    loop_control:
-      loop_var: workflow
-      label: "{{ workflow.file_name }}"
+- name: Ensure workflow file exists
+  ansible.builtin.template:
+    src: "{{ workflow.path_override | default('workflow.yml.j2') }}"
+    dest: "{{ github_output_directory }}/{{ workflow.file_name }}"
+    block_start_string: "<%"
+    block_end_string: "%>"
+    variable_start_string: "%%"
+    variable_end_string: "%%"
+    mode: "0644"
+  loop: "{{ github_workflows }}"
+  loop_control:
+    loop_var: workflow
+    label: "{{ workflow.file_name }}"
