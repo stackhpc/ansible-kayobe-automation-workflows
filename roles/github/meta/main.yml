@@ -13,8 +13,6 @@ galaxy_info:
   galaxy_tags:
     - openstack
     - kayobe
-    - continuous integration
-    - continuous deployment
     - tools
     - cloud
     - infrastructure
