@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
+- name: Test github role
+  hosts: localhost
   remote_user: root
   roles:
     - github
