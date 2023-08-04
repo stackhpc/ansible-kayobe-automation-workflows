@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: kayobe_automation_workflows
+  role_name: github
   author: Jack Hodgkiss
   description: Create kayobe automation workflow files
   company: StackHPC
@@ -13,6 +13,8 @@ galaxy_info:
   galaxy_tags:
     - openstack
     - kayobe
-    - CI/CD
+    - tools
+    - cloud
+    - infrastructure
 
 dependencies: []
