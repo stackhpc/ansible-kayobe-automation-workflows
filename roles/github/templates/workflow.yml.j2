@@ -1,4 +1,15 @@
-<% if workflow.use_bespoke is defined and workflow.use_bespoke is true %>
+<%- macro format_file_name(file_name, is_title=false, is_subtitle=false) -%>
+  <%- set formatted_name = file_name | splitext | first -%>
+  <%- if is_title -%>
+    <%- set formatted_name = formatted_name | replace('-', ' ') | title | regex_replace('Vm','VM') -%>
+  <%- endif -%>
+  <%- if is_subtitle -%>
+    <%- set formatted_name = formatted_name | replace('-', ' ') | capitalize | regex_replace('vm','VM') -%>
+  <%- endif -%>
+  %%- formatted_name -%%
+<%- endmacro -%>
+
+<% if workflow.use_bespoke is true %>
   <%- extends workflow.file_name + ".j2" | string +%>
 <% else %>
   <%- extends "generic.yml.j2" +%>
