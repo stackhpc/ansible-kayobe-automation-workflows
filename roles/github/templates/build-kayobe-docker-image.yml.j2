@@ -10,7 +10,8 @@ env:
 jobs:
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
-    container: docker:git
+    container:
+      image: docker:24.0-git
     permissions:
       contents: read
       packages: write
