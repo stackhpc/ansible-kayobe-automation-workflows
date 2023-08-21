@@ -49,10 +49,10 @@ jobs:
           source /src/.automation/functions &&
           kayobe_install
         env:
-          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_VAULT_PASSWORD: '%% kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
-          HOME: '%% kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
+          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+          HOME: '%% github_kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
           USER: stack
 
       - name: Symlink kolla into /src/etc

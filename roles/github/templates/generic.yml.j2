@@ -31,9 +31,9 @@ jobs:
           /src/.automation/pipeline/%% workflow.file_name[4:-4] %%.sh
         <%- if workflow.arguments is defined +%>
         env:
-          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
           <%- for argument in workflow.arguments +%>
-          %% argument %%: '%% kayobe_arguments[argument] | default(default_kayobe_arguments[argument]) %%'
+          %% argument %%: '%% github_kayobe_arguments[argument] | default(default_kayobe_arguments[argument]) %%'
           <%- endfor +%>
         <%- endif +%>
 <% if github_final_hook | length >= 1 +%>
