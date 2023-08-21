@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
   KAYOBE_USER_UID: 1000
   KAYOBE_USER_GID: 1000
 
@@ -32,14 +30,6 @@ jobs:
           username: %% github_registry_username %%
           password: %% github_registry_password %%
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          flavor: |
-           latest=${{ !contains(github.ref, 'alpha') }}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
@@ -59,8 +49,9 @@ jobs:
              KAYOBE_USER_UID=${{ env.KAYOBE_USER_UID }}
              KAYOBE_USER_GID=${{ env.KAYOBE_USER_UID }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            %% github_registry_url %%/kayobe:latest
+            %% github_registry_url %%/kayobe:${{ github.sha }}
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%
 <% endif %>
