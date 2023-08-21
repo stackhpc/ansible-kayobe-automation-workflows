@@ -25,7 +25,7 @@ jobs:
       contents: read
       packages: read
     container:
-      image: %% github_registry_url %%/%% github_image_name %%
+      image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
         username: %% github_registry_username %%
         password: %% github_registry_password %%

@@ -9,7 +9,9 @@ github_registry_username: ${{ github.actor }}
 
 github_registry_password: ${{ secrets.GITHUB_TOKEN }}
 
-github_image_name: ${{ github.repository }}:latest
+github_image_name: kayobe
+
+github_image_tag: latest
 
 github_kayobe_arguments: {}
 

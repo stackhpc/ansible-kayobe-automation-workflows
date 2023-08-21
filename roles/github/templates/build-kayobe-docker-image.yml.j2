@@ -51,8 +51,8 @@ jobs:
              KAYOBE_USER_GID=${{ env.KAYOBE_USER_UID }}
           push: true
           tags: |
-            %% github_registry_url %%/kayobe:latest
-            %% github_registry_url %%/kayobe:${{ github.sha }}
+            %% github_registry_url %%/%% github_image_name %%:latest
+            %% github_registry_url %%/%% github_image_name %%:${{ github.sha }}
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%
 <% endif %>
