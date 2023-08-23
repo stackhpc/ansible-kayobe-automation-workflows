@@ -80,8 +80,6 @@ github_build_kayobe_image:
   path_override: "{{ playbook_dir }}/templates/build-kayobe-docker-image.yml.j2"
 ```
 
-
-
 Template Hooks
 --------------
 

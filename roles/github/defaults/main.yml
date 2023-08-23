@@ -21,6 +21,8 @@ github_kayobe_hook: ""
 
 github_final_hook: ""
 
+github_buildx_inline_config: ""
+
 github_kayobe_limit_input: |
   kayobeLimit:
     description: |

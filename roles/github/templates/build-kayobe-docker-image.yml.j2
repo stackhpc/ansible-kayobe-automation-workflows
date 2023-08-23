@@ -34,8 +34,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-         driver-opts: |
-           image=moby/buildkit:master
+          driver-opts: |
+            image=moby/buildkit:master
+<%if github_buildx_inline_config | length >= 1 %>
+          config-inline: |
+            %% github_buildx_inline_config | indent(12) | trim %%
+<% endif %>
 
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
