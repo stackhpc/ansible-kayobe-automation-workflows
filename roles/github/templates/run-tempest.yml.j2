@@ -69,9 +69,9 @@ jobs:
           KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
           KAYOBE_AUTOMATION_TEMPEST_LOADLIST: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST | default(default_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST) %%'
           TEMPEST_PATTERN: '%% github_kayobe_arguments.TEMPEST_PATTERN | default(default_kayobe_arguments.TEMPEST_PATTERN) %%'
-          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY) %%'
-          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_USERNAME: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_USERNAME | default(default_kayobe_arguments.KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_USERNAME) %%'
-          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD | default(default_kayobe_arguments.KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD) %%'
+          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY: '%% github_registry_url %%'
+          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_USERNAME: '%% github_registry_username %%'
+          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD: '%% github_registry_password %%'
           HOME: '%% github_kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
 
       - name: Print stdout
