@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     <%- if workflow.trigger['workflow_dispatch'] is not none +%>
     inputs:
-      %% workflow.trigger['workflow_dispatch'] | join('') | indent(6) | trim %%
+      %% workflow.trigger['workflow_dispatch'] | flatten | join('') | indent(6) | trim %%
     <%- endif +%>
   <%- endif +%>
   <%- endfor +%>

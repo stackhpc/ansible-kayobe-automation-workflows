@@ -21,6 +21,14 @@ default_kayobe_arguments:
   KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   HOME: /stack
 
+github_kayobe_dispatch_inputs:
+  - "{{ github_kayobe_limit_input }}"
+  - "{{ github_kayobe_tags_input }}"
+
+github_kolla_dispatch_inputs:
+  - "{{ github_kolla_tags_input }}"
+  - "{{ github_kolla_limit_input }}"
+
 github_kayobe_task_arguments:
   - KAYOBE_TAGS
   - KAYOBE_LIMIT

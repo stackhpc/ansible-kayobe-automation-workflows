@@ -78,167 +78,115 @@ github_run_kolla_config_diff:
 github_run_infra_vm_host_configure:
   file_name: run-infra-vm-host-configure.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_infra_vm_host_package_update:
   file_name: run-infra-vm-host-package-update.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_infra_vm_provision:
   file_name: run-infra-vm-provision.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_infra_vm_service_deploy:
   file_name: run-infra-vm-service-deploy.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_network_connectivity_check:
   file_name: run-network-connectivity-check.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_overcloud_container_image_pull:
   file_name: run-overcloud-container-image-pull.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
-      - "{{ github_kolla_tags_input }}"
-      - "{{ github_kolla_limit_input }}"
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
 
 github_run_overcloud_database_backup:
   file_name: run-overcloud-database-backup.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
-      - "{{ github_kolla_tags_input }}"
-      - "{{ github_kolla_limit_input }}"
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
 
 github_run_overcloud_host_configure:
   file_name: run-overcloud-host-configure.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
-      - "{{ github_kolla_tags_input }}"
-      - "{{ github_kolla_limit_input }}"
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
 
 github_run_overcloud_host_package_update:
   file_name: run-overcloud-host-package-update.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_overcloud_inventory_discover:
   file_name: run-overcloud-inventory-discover.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
 
 github_run_overcloud_provision:
   file_name: run-overcloud-provision.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_overcloud_service_deploy:
   file_name: run-overcloud-service-deploy.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
-      - "{{ github_kolla_tags_input }}"
-      - "{{ github_kolla_limit_input }}"
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
 
 github_run_overcloud_service_upgrade:
   file_name: run-overcloud-service-upgrade.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
-      - "{{ github_kolla_tags_input }}"
-      - "{{ github_kolla_limit_input }}"
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
 
 github_run_seed_host_configure:
   file_name: run-seed-host-configure.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
-      - "{{ github_kolla_tags_input }}"
-      - "{{ github_kolla_limit_input }}"
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
 
 github_run_seed_host_package_update:
   file_name: run-seed-host-package-update.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_seed_hypervisor_host_configure:
   file_name: run-seed-hypervisor-host-configure.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_seed_hypervisor_host_package_update:
   file_name: run-seed-hypervisor-host-package-update.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_seed_service_deploy:
   file_name: run-seed-service-deploy.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
-      - "{{ github_kolla_tags_input }}"
-      - "{{ github_kolla_limit_input }}"
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
 
 github_run_seed_vm_provision:
   file_name: run-seed-vm-provision.yml
   trigger:
-    workflow_dispatch:
-      - "{{ github_kayobe_limit_input }}"
-      - "{{ github_kayobe_tags_input }}"
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
 
 github_run_tempest:
