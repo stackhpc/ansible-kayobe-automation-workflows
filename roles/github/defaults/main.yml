@@ -82,11 +82,8 @@ github_run_infra_vm_host_configure:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_infra_vm_host_package_update:
   file_name: run-infra-vm-host-package-update.yml
@@ -95,11 +92,8 @@ github_run_infra_vm_host_package_update:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_infra_vm_provision:
   file_name: run-infra-vm-provision.yml
@@ -108,11 +102,8 @@ github_run_infra_vm_provision:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_infra_vm_service_deploy:
   file_name: run-infra-vm-service-deploy.yml
@@ -121,11 +112,8 @@ github_run_infra_vm_service_deploy:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_network_connectivity_check:
   file_name: run-network-connectivity-check.yml
@@ -134,11 +122,8 @@ github_run_network_connectivity_check:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_overcloud_container_image_pull:
   file_name: run-overcloud-container-image-pull.yml
@@ -149,13 +134,10 @@ github_run_overcloud_container_image_pull:
       - "{{ github_kolla_tags_input }}"
       - "{{ github_kolla_limit_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KOLLA_TAGS
     - KOLLA_LIMIT
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_overcloud_database_backup:
   file_name: run-overcloud-database-backup.yml
@@ -166,13 +148,10 @@ github_run_overcloud_database_backup:
       - "{{ github_kolla_tags_input }}"
       - "{{ github_kolla_limit_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KOLLA_TAGS
     - KOLLA_LIMIT
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_overcloud_host_configure:
   file_name: run-overcloud-host-configure.yml
@@ -183,13 +162,10 @@ github_run_overcloud_host_configure:
       - "{{ github_kolla_tags_input }}"
       - "{{ github_kolla_limit_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KOLLA_TAGS
     - KOLLA_LIMIT
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_overcloud_host_package_update:
   file_name: run-overcloud-host-package-update.yml
@@ -198,11 +174,8 @@ github_run_overcloud_host_package_update:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_overcloud_inventory_discover:
   file_name: run-overcloud-inventory-discover.yml
@@ -211,8 +184,6 @@ github_run_overcloud_inventory_discover:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
     - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
@@ -222,7 +193,6 @@ github_run_overcloud_inventory_discover:
     - KAYOBE_AUTOMATION_PR_TYPE
     - KAYOBE_AUTOMATION_PR_TITLE
     - KAYOBE_AUTOMATION_PR_URL
-    - HOME
 
 github_run_overcloud_provision:
   file_name: run-overcloud-provision.yml
@@ -231,11 +201,8 @@ github_run_overcloud_provision:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_overcloud_service_deploy:
   file_name: run-overcloud-service-deploy.yml
@@ -246,8 +213,6 @@ github_run_overcloud_service_deploy:
       - "{{ github_kolla_tags_input }}"
       - "{{ github_kolla_limit_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KOLLA_TAGS
     - KOLLA_LIMIT
     - KAYOBE_TAGS
@@ -259,7 +224,6 @@ github_run_overcloud_service_deploy:
     - KAYOBE_AUTOMATION_PR_TYPE
     - KAYOBE_AUTOMATION_PR_TITLE
     - KAYOBE_AUTOMATION_PR_URL
-    - HOME
 
 github_run_overcloud_service_upgrade:
   file_name: run-overcloud-service-upgrade.yml
@@ -270,8 +234,6 @@ github_run_overcloud_service_upgrade:
       - "{{ github_kolla_tags_input }}"
       - "{{ github_kolla_limit_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KOLLA_TAGS
     - KOLLA_LIMIT
     - KAYOBE_TAGS
@@ -283,7 +245,6 @@ github_run_overcloud_service_upgrade:
     - KAYOBE_AUTOMATION_PR_TYPE
     - KAYOBE_AUTOMATION_PR_TITLE
     - KAYOBE_AUTOMATION_PR_URL
-    - HOME
 
 github_run_seed_host_configure:
   file_name: run-seed-host-configure.yml
@@ -294,13 +255,10 @@ github_run_seed_host_configure:
       - "{{ github_kolla_tags_input }}"
       - "{{ github_kolla_limit_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KOLLA_TAGS
     - KOLLA_LIMIT
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_seed_host_package_update:
   file_name: run-seed-host-package-update.yml
@@ -309,11 +267,8 @@ github_run_seed_host_package_update:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_seed_hypervisor_host_configure:
   file_name: run-seed-hypervisor-host-configure.yml
@@ -322,11 +277,8 @@ github_run_seed_hypervisor_host_configure:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_seed_hypervisor_host_package_update:
   file_name: run-seed-hypervisor-host-package-update.yml
@@ -335,11 +287,8 @@ github_run_seed_hypervisor_host_package_update:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_seed_service_deploy:
   file_name: run-seed-service-deploy.yml
@@ -350,8 +299,6 @@ github_run_seed_service_deploy:
       - "{{ github_kolla_tags_input }}"
       - "{{ github_kolla_limit_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KOLLA_TAGS
     - KOLLA_LIMIT
     - KAYOBE_TAGS
@@ -363,7 +310,6 @@ github_run_seed_service_deploy:
     - KAYOBE_AUTOMATION_PR_TYPE
     - KAYOBE_AUTOMATION_PR_TITLE
     - KAYOBE_AUTOMATION_PR_URL
-    - HOME
 
 github_run_seed_vm_provision:
   file_name: run-seed-vm-provision.yml
@@ -372,11 +318,8 @@ github_run_seed_vm_provision:
       - "{{ github_kayobe_limit_input }}"
       - "{{ github_kayobe_tags_input }}"
   arguments:
-    - KAYOBE_AUTOMATION_SSH_PRIVATE_KEY
-    - KAYOBE_VAULT_PASSWORD
     - KAYOBE_TAGS
     - KAYOBE_LIMIT
-    - HOME
 
 github_run_tempest:
   file_name: run-tempest.yml
