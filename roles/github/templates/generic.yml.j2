@@ -34,7 +34,7 @@ jobs:
           KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
           KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
           KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
-          <%- for argument in workflow.arguments +%>
+          <%- for argument in workflow.arguments | flatten +%>
           %% argument %%: '%% github_kayobe_arguments[argument] | default(default_kayobe_arguments[argument]) %%'
           <%- endfor +%>
           HOME: '%% github_kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
