@@ -1,6 +1,5 @@
 ---
-- name: Test github role
+- name: Test `stackhpc.kayobe_automation`
   hosts: localhost
-  remote_user: root
   roles:
     - github

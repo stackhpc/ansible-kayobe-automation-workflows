@@ -1,0 +1,25 @@
+---
+name: Test stackhpc.kayobe_workflows collection
+'on':
+  pull_request:
+
+jobs:
+  test:
+    name: Test github role
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Ansible
+        run: pip3 install ansible
+
+      - name: Test the playbook.
+        run: ansible-playbook tests/test.yml
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
