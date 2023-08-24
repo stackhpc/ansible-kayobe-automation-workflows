@@ -11,6 +11,7 @@ jobs:
       credentials:
         username: %% github_registry_username %%
         password: %% github_registry_password %%
+    timeout-minutes: %% github_timeout %%
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
