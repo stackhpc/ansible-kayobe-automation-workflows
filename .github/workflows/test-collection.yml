@@ -23,3 +23,9 @@ jobs:
         run: ansible-playbook tests/test.yml
         env:
           ANSIBLE_FORCE_COLOR: '1'
+
+      - name: Upload workflows produced
+        uses: actions/upload-artifact@v3
+        with:
+          name: github_kayobe_workflows
+          path: tests/.github/workflows
