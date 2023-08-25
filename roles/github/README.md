@@ -38,7 +38,9 @@ The following variables can be used to make small adjustments to the composition
 
 `github_runs_on`: control which runner can accept this workflow. See GitHub for more information on [runs-on](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on).
 
-`github_image_url`: full URL of the kayobe container image complete with registry and tag.
+`github_image_name`: name of the kayobe image defaults to `kayobe`.
+
+`github_image_tag`: tag used to select kayobe image defaults to `latest` 
 
 `github_registry_username`: username used to authenticate with the docker registry.
 
@@ -47,6 +49,17 @@ The following variables can be used to make small adjustments to the composition
 `github_kayobe_arguments`: a dictionary of arguments that can be used to override the default arguments found within `vars/main.yml`. For example if you wanted to change the value of `KAYOBE_ENVIRONMENT` from its default of `production` you can simply add `KAYOBE_ENVIRONMENT` to this dictionary and it will take precedence over the defaults.
 
 `github_*_hook:` see section [Template Hooks](#template-hooks)  for information about this variables
+
+`github_buildx_inline_config`: provide configuration parameters to buildx. Useful for connecting to insecure docker registry.
+
+```yaml
+github_buildx_inline_config: |
+  [registry."10.20.30.40:80"]
+    http = true
+    insecure = true
+```
+
+`github_timeout`: control how a long a job may run before being cancelled. Timeout is defined in minutes and defaults to 360 minutes (6 hours)
 
 If you wish to make more impactful changes such as which workflows are built and what they contain then see the list of dictionaries called `workflows` in `defaults/main.yml`
 
