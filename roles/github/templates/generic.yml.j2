@@ -20,12 +20,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
+          path: kayobe-config
 
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
 <% endif %>
       - name: Symlink source checkout to expected location
-        run: sudo ln -s $PWD /src
+        run: sudo ln -s $PWD/kayobe-config /src
 
       - name: %% format_file_name(workflow.file_name, is_subtitle=true)  %%
         run: |
