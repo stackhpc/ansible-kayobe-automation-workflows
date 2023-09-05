@@ -40,7 +40,7 @@ The following variables can be used to make small adjustments to the composition
 
 `github_image_name`: name of the kayobe image defaults to `kayobe`.
 
-`github_image_tag`: tag used to select kayobe image defaults to `latest` 
+`github_image_tag`: tag used to select kayobe image defaults to `latest`
 
 `github_registry_username`: username used to authenticate with the docker registry.
 
@@ -62,6 +62,8 @@ github_buildx_inline_config: |
 `github_timeout`: control how a long a job may run before being cancelled. Timeout is defined in minutes and defaults to 360 minutes (6 hours)
 
 If you wish to make more impactful changes such as which workflows are built and what they contain then see the list of dictionaries called `workflows` in `defaults/main.yml`
+
+`github_buildx_enable_provenance`: whether or not to enable build attestations/provenence. This causes issues on some clouds and so is defaulted to `false`.
 
 `github_workflows:` is a list of dictionaries that contains each of the workflows described above. A given list element is made up of the following:
 

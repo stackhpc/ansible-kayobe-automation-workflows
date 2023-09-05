@@ -25,6 +25,8 @@ github_buildx_inline_config: ""
 
 github_timeout: 360
 
+github_buildx_enable_provenance: false
+
 github_kayobe_limit_input: |
   kayobeLimit:
     description: |
