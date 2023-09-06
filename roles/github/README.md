@@ -63,7 +63,7 @@ github_buildx_inline_config: |
 
 If you wish to make more impactful changes such as which workflows are built and what they contain then see the list of dictionaries called `workflows` in `defaults/main.yml`
 
-`github_buildx_enable_provenance`: whether or not to enable build attestations/provenence. This causes issues on some clouds and so is defaulted to `false`.
+`github_buildx_enable_provenance`: whether or not to enable build attestations/provenence. This has been [noted](https://github.com/docker/build-push-action/releases/tag/v4.1.1) to cause issues with docker registries such as Pulp. Default to false.
 
 `github_workflows:` is a list of dictionaries that contains each of the workflows described above. A given list element is made up of the following:
 
