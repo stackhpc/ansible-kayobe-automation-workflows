@@ -14,6 +14,7 @@ jobs:
       image: docker:24.0-git
     permissions:
       contents: read
+      packages: %% 'write' if github_registry_url == 'ghcr.io' else 'none' %%
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
