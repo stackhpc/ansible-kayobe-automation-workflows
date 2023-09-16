@@ -11,6 +11,9 @@ jobs:
       credentials:
         username: %% github_registry_username %%
         password: %% github_registry_password %%
+    concurrency:
+      group: %% workflow.concurrency_group %%
+      cancel-in-progress: false
     timeout-minutes: %% github_timeout %%
     steps:
 <% if github_checkout_hook | length >= 1 %>
