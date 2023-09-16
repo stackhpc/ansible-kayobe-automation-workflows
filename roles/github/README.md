@@ -50,6 +50,8 @@ The following variables can be used to make small adjustments to the composition
 
 `github_*_hook:` see section [Template Hooks](#template-hooks)  for information about this variables
 
+`github_buildx_enable`: In some deployments the build kayobe docker image workflow has had difficulties successfully pushing the image to container registries such as Pulp if buildx has been used. It situations where failure to push images is been experienced a user might wish to disable buildx. Buildx is enabled by default. 
+
 `github_buildx_inline_config`: provide configuration parameters to buildx. Useful for connecting to insecure docker registry.
 
 ```yaml
@@ -59,11 +61,11 @@ github_buildx_inline_config: |
     insecure = true
 ```
 
+`github_buildx_enable_provenance`: whether or not to enable build attestations/provenence. This has been [noted](https://github.com/docker/build-push-action/releases/tag/v4.1.1) to cause issues with docker registries such as Pulp. Default to false.
+
 `github_timeout`: control how a long a job may run before being cancelled. Timeout is defined in minutes and defaults to 360 minutes (6 hours)
 
 If you wish to make more impactful changes such as which workflows are built and what they contain then see the list of dictionaries called `workflows` in `defaults/main.yml`
-
-`github_buildx_enable_provenance`: whether or not to enable build attestations/provenence. This has been [noted](https://github.com/docker/build-push-action/releases/tag/v4.1.1) to cause issues with docker registries such as Pulp. Default to false.
 
 `github_workflows:` is a list of dictionaries that contains each of the workflows described above. A given list element is made up of the following:
 
