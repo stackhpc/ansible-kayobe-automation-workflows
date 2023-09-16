@@ -36,9 +36,9 @@ jobs:
 <% endif %>
       - name: Checkout kayobe config
         uses: actions/checkout@v3
-        path: kayobe-config
         with:
-           submodules: true
+          submodules: true
+          path: kayobe-config
 
       - name: Symlink source checkout to expected location
         run: sudo ln -s $PWD/kayobe-config /src
