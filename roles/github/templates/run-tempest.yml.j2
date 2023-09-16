@@ -63,7 +63,7 @@ jobs:
 
       - name: Run ${{ github.event.inputs.testSuite }} tempest testsuite
         run: |
-          /src/.automation/pipeline/tempest.sh
+          /src/.automation/pipeline/tempest.sh -e ansible_user=stack
         env:
           KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
           KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
