@@ -12,8 +12,7 @@ on:
         default: 'default'
         type: choice
         options:
-          - default
-          - tempest-full
+          %% workflow.test_suites | flatten | join('') | indent(10) | trim %%
       tempestPattern:
         description: |
           Limit tests to this regex. Takes precedence over testSuite.

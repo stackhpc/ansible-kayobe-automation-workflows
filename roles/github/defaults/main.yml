@@ -31,6 +31,10 @@ github_buildx_enable_provenance: false
 
 github_timeout: 360
 
+github_tempest_test_suites: |
+  - default
+  - tempest-full
+
 github_kayobe_limit_input: |
   kayobeLimit:
     description: |
@@ -220,3 +224,4 @@ github_run_seed_vm_provision:
 github_run_tempest:
   file_name: run-tempest.yml
   use_bespoke: true
+  test_suites: "{{ github_tempest_test_suites }}"

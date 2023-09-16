@@ -67,6 +67,8 @@ github_buildx_inline_config: |
 
 `github_timeout`: control how a long a job may run before being cancelled. Timeout is defined in minutes and defaults to 360 minutes (6 hours)
 
+`github_tempest_test_suites`: provide a list of load lists to be made available within the drop-down list for running tempest. Defaults to `default` and `tempest-full`.
+
 If you wish to make more impactful changes such as which workflows are built and what they contain then see the list of dictionaries called `workflows` in `defaults/main.yml`
 
 `github_workflows:` is a list of dictionaries that contains each of the workflows described above. A given list element is made up of the following:
