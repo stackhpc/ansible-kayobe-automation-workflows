@@ -12,7 +12,6 @@ jobs:
     runs-on: %% github_runs_on %%
     permissions:
       contents: read
-      packages: read
     container:
       image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
