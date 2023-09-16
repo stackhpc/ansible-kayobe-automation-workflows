@@ -13,6 +13,8 @@ github_image_name: kayobe
 
 github_image_tag: latest
 
+github_kayobe_base_image: "quay.io/centos/centos:stream8"
+
 github_kayobe_arguments: {}
 
 github_checkout_hook: ""
