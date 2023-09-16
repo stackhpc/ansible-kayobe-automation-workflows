@@ -57,7 +57,7 @@ jobs:
              KAYOBE_DOCKER_SSH_CONFIG_PATH=.automation/docker/kayobe/ssh_config
              KAYOBE_USER_UID=${{ env.KAYOBE_USER_UID }}
              KAYOBE_USER_GID=${{ env.KAYOBE_USER_UID }}
-             BASE_IMAGE: %% github_kayobe_base_image %%
+             BASE_IMAGE=%% github_kayobe_base_image %%
           push: true
           tags: |
             %% github_registry_url %%/%% github_image_name %%:latest
