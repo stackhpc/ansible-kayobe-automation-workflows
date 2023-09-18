@@ -16,9 +16,6 @@ default_kayobe_arguments:
   KAYOBE_AUTOMATION_PR_URL: !unsafe https://api.github.com/repos/${{ github.repository }}/pulls
   KAYOBE_AUTOMATION_TEMPEST_LOADLIST: !unsafe "${{ github.event.inputs.testSuite }}"
   TEMPEST_PATTERN: !unsafe "${{ github.event.inputs.tempestPattern }}"
-  KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY: ghcr.io
-  KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_USERNAME: !unsafe ${{ github.actor }}
-  KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD: !unsafe ${{ secrets.GITHUB_TOKEN }}
   HOME: /stack
 
 github_kayobe_dispatch_inputs:
