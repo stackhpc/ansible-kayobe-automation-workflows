@@ -37,13 +37,13 @@ jobs:
           /src/.automation/pipeline/%% workflow.file_name[4:-4] %%.sh
         <%- if workflow.arguments is defined +%>
         env:
-          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
-          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
+          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
           <%- for argument in workflow.arguments | flatten +%>
-          %% argument %%: '%% github_kayobe_arguments[argument] | default(default_kayobe_arguments[argument]) %%'
+          %% argument %%: '%% github_kayobe_arguments[argument] | default(github_default_kayobe_arguments[argument]) %%'
           <%- endfor +%>
-          HOME: '%% github_kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
+          HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
         <%- endif +%>
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%

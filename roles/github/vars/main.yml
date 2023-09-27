@@ -1,5 +1,5 @@
 ---
-default_kayobe_arguments:
+github_default_kayobe_arguments:
   KAYOBE_ENVIRONMENT: production
   KAYOBE_VAULT_PASSWORD: !unsafe "${{ secrets.KAYOBE_VAULT_PASSWORD }}"
   KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: !unsafe "${{ secrets.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY }}"

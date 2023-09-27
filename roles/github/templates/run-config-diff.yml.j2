@@ -42,10 +42,10 @@ jobs:
         run: |
             sudo -E -u stack bash -c '/src/.automation/pipeline/config-diff.sh ${{ github.event.pull_request.base.sha }}'
         env:
-          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
-          HOME: '%% github_kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
+          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+          HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
 
       - name: Show summary of changes
         run: |
