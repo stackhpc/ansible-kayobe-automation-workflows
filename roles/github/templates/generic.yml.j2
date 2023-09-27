@@ -6,7 +6,7 @@ jobs:
     permissions:
       contents: write
       packages: %% 'read' if github_registry_url == 'ghcr.io' else 'none' %%
-      pull-requests: write
+      pull-requests: %% 'write' if KAYOBE_AUTOMATION_PR_TYPE in workflow.arguments else 'none' %%
     container:
       image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
