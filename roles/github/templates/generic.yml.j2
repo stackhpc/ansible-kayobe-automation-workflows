@@ -4,7 +4,7 @@ jobs:
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
     permissions:
-      contents: write
+      contents: %% 'write' if 'KAYOBE_AUTOMATION_PR_TYPE' in workflow.arguments | flatten  else 'read' %%
       packages: %% 'read' if github_registry_url == 'ghcr.io' else 'none' %%
       pull-requests: %% 'write' if 'KAYOBE_AUTOMATION_PR_TYPE' in workflow.arguments | flatten else 'none' %%
     container:
