@@ -6,6 +6,7 @@ jobs:
     permissions:
       contents: write
       packages: %% 'read' if github_registry_url == 'ghcr.io' else 'none' %%
+      pull-requests: write
     container:
       image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
