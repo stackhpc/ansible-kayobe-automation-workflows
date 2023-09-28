@@ -19,13 +19,24 @@ jobs:
       - name: Install Ansible
         run: pip3 install ansible
 
-      - name: Test the playbook.
-        run: ansible-playbook tests/test.yml
+      - name: Test the playbook [single environment].
+        run: "ansible-playbook tests/test.yml -e \"{'github_output_directory': '.github/workflows/single_environment'}\""
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
-      - name: Upload workflows produced
+      - name: Test the playbook [multiple environments].
+        run: "ansible-playbook tests/test.yml -e \"{'github_output_directory': '.github/workflows/multiple_environments', 'github_environment_type': 'kayobe', 'github_kayobe_environments': [production, staging]}\""
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+
+      - name: Upload workflows produced [single environment]
         uses: actions/upload-artifact@v3
         with:
-          name: github_kayobe_workflows
-          path: tests/.github/workflows
+          name: github_kayobe_workflows_single_environment
+          path: tests/.github/workflows/single_environment
+
+      - name: Upload workflows produced [multiple environment]
+        uses: actions/upload-artifact@v3
+        with:
+          name: github_kayobe_workflows_multiple_environments
+          path: tests/.github/workflows/multiple_environments
