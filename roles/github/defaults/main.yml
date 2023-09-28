@@ -238,3 +238,4 @@ github_run_tempest:
   file_name: run-tempest.yml
   use_bespoke: true
   test_suites: "{{ github_tempest_test_suites }}"
+  concurrency_group: tempest
