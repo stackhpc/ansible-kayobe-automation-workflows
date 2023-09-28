@@ -30,12 +30,12 @@ jobs:
           ANSIBLE_FORCE_COLOR: '1'
 
       - name: Test the playbook [single environment with custom registry].
-        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_output_directory': '.github/workflows/single_environment_registry'}\""
+        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_registry_password': '${{ secrets.REGISTRY_PASSWORD }}', 'github_output_directory': '.github/workflows/single_environment_registry'}\""
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
       - name: Test the playbook [multiple environments with custom registry].
-        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_output_directory': '.github/workflows/multiple_environments_registry', 'github_environment_type': 'kayobe', 'github_kayobe_environments': [production, staging]}\""
+        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_registry_password': '${{ secrets.REGISTRY_PASSWORD }}', 'github_output_directory': '.github/workflows/multiple_environments_registry', 'github_environment_type': 'kayobe', 'github_kayobe_environments': [production, staging]}\""
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
