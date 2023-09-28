@@ -1,4 +1,13 @@
 <% include "header.yml.j2" +%>
+<%- if github_environment_type == 'kayobe' -%>
+<%- set github_runs_on = github_runs_on + ['${{ inputs.kayobe_environment }}'] -%>
+<%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', inputs.kayobe_environment)] }}" -%>
+<%- set github_registry_password = "${{ secrets[format('{0}_REGISTRY_PASSWORD', inputs.kayobe_environment)] }}" -%>
+<%- set _ = workflow.update({"concurrency_group": "format('{0}-{1}', " + workflow.concurrency_group + ", '${{ inputs.kayobe_environment }}')" })  -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ inputs.kayobe_environment }}'}) -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', inputs.kayobe_environment)] }}" }) -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
+<%- endif +%>
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
@@ -38,8 +47,8 @@ jobs:
         <%- if workflow.arguments is defined +%>
         env:
           KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
-          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
+          KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
           <%- for argument in workflow.arguments | flatten +%>
           %% argument %%: '%% github_kayobe_arguments[argument] | default(github_default_kayobe_arguments[argument]) %%'
           <%- endfor +%>
