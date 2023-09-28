@@ -11,6 +11,9 @@ on:
     <%- if workflow.trigger['workflow_dispatch'] is not none +%>
     inputs:
       %% workflow.trigger['workflow_dispatch'] | flatten | join('') | indent(6) | trim %%
+    <%- if github_environment_type == 'kayobe' +%>
+      %% github_kayobe_environment_input | flatten | join('') | indent(6) | trim %% %% github_kayobe_environments %%
+    <%- endif +%>
     <%- endif +%>
   <%- endif +%>
   <%- endfor +%>
