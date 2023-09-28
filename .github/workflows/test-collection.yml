@@ -29,14 +29,36 @@ jobs:
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
+      - name: Test the playbook [single environment with custom registry].
+        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_output_directory': '.github/workflows/single_environment_registry'}\""
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+
+      - name: Test the playbook [multiple environments with custom registry].
+        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_output_directory': '.github/workflows/multiple_environments_registry', 'github_environment_type': 'kayobe', 'github_kayobe_environments': [production, staging]}\""
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+
       - name: Upload workflows produced [single environment]
         uses: actions/upload-artifact@v3
         with:
           name: github_kayobe_workflows_single_environment
           path: tests/.github/workflows/single_environment
 
+      - name: Upload workflows produced [single environment with custom registry]
+        uses: actions/upload-artifact@v3
+        with:
+          name: github_kayobe_workflows_single_environment_registry
+          path: tests/.github/workflows/single_environment_registry
+
       - name: Upload workflows produced [multiple environment]
         uses: actions/upload-artifact@v3
         with:
           name: github_kayobe_workflows_multiple_environments
           path: tests/.github/workflows/multiple_environments
+
+      - name: Upload workflows produced [multiple environment with custom registry]
+        uses: actions/upload-artifact@v3
+        with:
+          name: github_kayobe_workflows_multiple_environments
+          path: tests/.github/workflows/multiple_environments_registry
