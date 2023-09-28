@@ -13,7 +13,7 @@ name: %% format_file_name(workflow.file_name, is_title=true) %%
 on:
   workflow_dispatch:
     inputs:
-      testSuite:
+      test_suite:
         description: |
           The list of tests to run. This should be a name of file under
           .automation.conf/tempest/load-lists. Defaults to running
@@ -23,7 +23,7 @@ on:
         type: choice
         options:
           %% workflow.test_suites | flatten | join('') | indent(10) | trim %%
-      tempestPattern:
+      tempest_pattern:
         description: |
           Limit tests to this regex. Takes precedence over testSuite.
       <%- if github_environment_type == 'kayobe' +%>
@@ -61,7 +61,7 @@ jobs:
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
 <% endif %>
-      - name: Run ${{ github.event.inputs.testSuite }} tempest testsuite
+      - name: Run ${{ github.event.inputs.test_suite }} tempest testsuite
         run: |
           /src/.automation/pipeline/tempest.sh -e ansible_user=stack
         env:
