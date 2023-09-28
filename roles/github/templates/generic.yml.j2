@@ -7,7 +7,7 @@
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ inputs.kayobe_environment }}'}) -%>
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
-<%- endif +%>
+<%- endif -%>
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
