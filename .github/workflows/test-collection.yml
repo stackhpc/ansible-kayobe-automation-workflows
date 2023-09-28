@@ -60,5 +60,5 @@ jobs:
       - name: Upload workflows produced [multiple environment with custom registry]
         uses: actions/upload-artifact@v3
         with:
-          name: github_kayobe_workflows_multiple_environments
+          name: github_kayobe_workflows_multiple_environments_registry
           path: tests/.github/workflows/multiple_environments_registry
