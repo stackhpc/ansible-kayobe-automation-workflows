@@ -1,3 +1,8 @@
+<%- if github_environment_type == 'kayobe' -%>
+<%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
+<%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" -%>
+<%- set github_registry_password = "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" -%>
+<%- endif +%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
 on:
@@ -9,6 +14,11 @@ env:
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
+    <%- if github_environment_type == 'kayobe' +%>
+    strategy:
+      matrix:
+        environment: %% github_kayobe_environments %%
+    <%- endif +%>
     runs-on: %% github_runs_on %%
     container:
       image: docker:24.0-git
