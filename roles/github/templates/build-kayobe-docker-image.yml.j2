@@ -1,23 +1,20 @@
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
   KAYOBE_USER_UID: 1000
   KAYOBE_USER_GID: 1000
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
-    container: docker:git
+    container:
+      image: docker:24.0-git
     permissions:
       contents: read
-      packages: write
+      packages: %% 'write' if github_registry_url == 'ghcr.io' else 'none' %%
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
@@ -26,6 +23,7 @@ jobs:
         uses: actions/checkout@v3
         with:
            submodules: true
+           path: docker-image-build
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
@@ -34,35 +32,39 @@ jobs:
           username: %% github_registry_username %%
           password: %% github_registry_password %%
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          flavor: |
-           latest=${{ !contains(github.ref, 'alpha') }}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
+<% if github_buildx_enabled %>
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-         driver-opts: |
-           image=moby/buildkit:master
+          driver-opts: |
+            image=moby/buildkit:v0.12.1
+<% if github_buildx_inline_config | length >= 1 %>
+          config-inline: |
+            %% github_buildx_inline_config | indent(12) | trim %%
+<% endif %>
+          version: v0.11.2
 
+<% endif %>
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
 <% endif %>
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          file: ./.automation/docker/kayobe/Dockerfile
-          context: .
+          file: ./docker-image-build/.automation/docker/kayobe/Dockerfile
+          context: docker-image-build
           build-args: |
              KAYOBE_DOCKER_SSH_CONFIG_PATH=.automation/docker/kayobe/ssh_config
              KAYOBE_USER_UID=${{ env.KAYOBE_USER_UID }}
              KAYOBE_USER_GID=${{ env.KAYOBE_USER_UID }}
+             BASE_IMAGE=%% github_kayobe_base_image %%
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            %% github_registry_url %%/%% github_image_name %%:latest
+            %% github_registry_url %%/%% github_image_name %%:${{ github.sha }}
+<% if not github_buildx_enable_provenance %>
+          provenance: false
+<% endif %>
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%
 <% endif %>

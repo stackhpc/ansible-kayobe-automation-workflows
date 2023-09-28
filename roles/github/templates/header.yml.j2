@@ -10,15 +10,7 @@ on:
   workflow_dispatch:
     <%- if workflow.trigger['workflow_dispatch'] is not none +%>
     inputs:
-    <%- for input_name in workflow.trigger['workflow_dispatch'].keys() +%>
-      %% input_name %%:
-      <%- for property in workflow.trigger['workflow_dispatch'][input_name] +%>
-      <%- if property == 'description' +%>
-        %% property %%: |
-          %% workflow.trigger['workflow_dispatch'][input_name][property] | trim %%
-      <%- endif +%>
-      <%- endfor +%>
-    <%- endfor +%>
+      %% workflow.trigger['workflow_dispatch'] | flatten | join('') | indent(6) | trim %%
     <%- endif +%>
   <%- endif +%>
   <%- endfor +%>

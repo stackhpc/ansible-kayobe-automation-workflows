@@ -12,9 +12,9 @@ jobs:
     runs-on: %% github_runs_on %%
     permissions:
       contents: read
-      packages: read
+      packages: %% 'read' if github_registry_url == 'ghcr.io' else 'none' %%
     container:
-      image: %% github_registry_url %%/%% github_image_name %%
+      image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
         username: %% github_registry_username %%
         password: %% github_registry_password %%
@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@v3
         with:
            submodules: true
+           path: kayobe-config
            fetch-depth: 0
            ref: ${{ github.ref }}
 
@@ -34,17 +35,17 @@ jobs:
 <% endif %>
       - name: Copy checkout to expected location
         run: |
-            sudo cp -rf $GITHUB_WORKSPACE/ /src
+            sudo cp -rf $GITHUB_WORKSPACE/kayobe-config /src
             sudo chown stack:stack -Rf /src
 
       - name: Run config diff
         run: |
             sudo -E -u stack bash -c '/src/.automation/pipeline/config-diff.sh ${{ github.event.pull_request.base.sha }}'
         env:
-          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_VAULT_PASSWORD: '%% kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
-          HOME: '%% kayobe_arguments.HOME | default(default_kayobe_arguments.HOME) %%'
+          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+          HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
 
       - name: Show summary of changes
         run: |

@@ -5,11 +5,15 @@ github_runs_on: self-hosted
 
 github_registry_url: ghcr.io
 
-github_registry_username: ${{ github.actor }}
+github_registry_username: !unsafe "${{ github.actor }}"
 
-github_registry_password: ${{ secrets.GITHUB_TOKEN }}
+github_registry_password: !unsafe "${{ secrets.GITHUB_TOKEN }}"
 
-github_image_name: ${{ github.repository }}:latest
+github_image_name: kayobe
+
+github_image_tag: latest
+
+github_kayobe_base_image: "quay.io/centos/centos:stream8"
 
 github_kayobe_arguments: {}
 
@@ -19,24 +23,37 @@ github_kayobe_hook: ""
 
 github_final_hook: ""
 
-github_kayobe_inputs: &github_kayobe_inputs
+github_buildx_enabled: true
+
+github_buildx_inline_config: ""
+
+github_buildx_enable_provenance: false
+
+github_timeout: 360
+
+github_tempest_test_suites: |
+  - default
+  - tempest-full
+
+github_kayobe_limit_input: |
   kayobeLimit:
     description: |
       The ansible limit to use when running kayobe playbooks.
+
+github_kayobe_tags_input: |
   kayobeTags:
     description: |
       The ansible tags to use when running kayobe playbooks.
 
-github_kolla_inputs: &github_kolla_inputs
+github_kolla_limit_input: |
   kollaLimit:
     description: |
       The ansible limit to use for kolla-ansible playbooks.
+
+github_kolla_tags_input: |
   kollaTags:
     description: |
       The ansible tags to use when running kolla-ansible playbooks.
-
-github_combined_inputs: &github_combined_inputs
-  <<: [*github_kayobe_inputs, *github_kolla_inputs]
 
 github_workflows:
   - "{{ github_build_kayobe_image }}"
@@ -73,216 +90,138 @@ github_run_kolla_config_diff:
 github_run_infra_vm_host_configure:
   file_name: run-infra-vm-host-configure.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: infra
 
 github_run_infra_vm_host_package_update:
   file_name: run-infra-vm-host-package-update.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: infra
 
 github_run_infra_vm_provision:
   file_name: run-infra-vm-provision.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: infra
 
 github_run_infra_vm_service_deploy:
   file_name: run-infra-vm-service-deploy.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: infra
 
 github_run_network_connectivity_check:
   file_name: run-network-connectivity-check.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: network
 
 github_run_overcloud_container_image_pull:
   file_name: run-overcloud-container-image-pull.yml
   trigger:
-    workflow_dispatch: *github_combined_inputs
-  arguments:
-    - KOLLA_TAGS
-    - KOLLA_LIMIT
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
+  concurrency_group: overcloud
 
 github_run_overcloud_database_backup:
   file_name: run-overcloud-database-backup.yml
   trigger:
-    workflow_dispatch: *github_combined_inputs
-  arguments:
-    - KOLLA_TAGS
-    - KOLLA_LIMIT
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
+  concurrency_group: overcloud
 
 github_run_overcloud_host_configure:
   file_name: run-overcloud-host-configure.yml
   trigger:
-    workflow_dispatch: *github_combined_inputs
-  arguments:
-    - KOLLA_TAGS
-    - KOLLA_LIMIT
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
+  concurrency_group: overcloud
 
 github_run_overcloud_host_package_update:
   file_name: run-overcloud-host-package-update.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: overcloud
 
 github_run_overcloud_inventory_discover:
   file_name: run-overcloud-inventory-discover.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-    - KAYOBE_AUTOMATION_PR_REMOTE
-    - KAYOBE_AUTOMATION_PR_GITHUB_USER
-    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-    - KAYOBE_AUTOMATION_PR_TYPE
-    - KAYOBE_AUTOMATION_PR_TITLE
-    - KAYOBE_AUTOMATION_PR_URL
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
+  concurrency_group: overcloud
 
 github_run_overcloud_provision:
   file_name: run-overcloud-provision.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: overcloud
 
 github_run_overcloud_service_deploy:
   file_name: run-overcloud-service-deploy.yml
   trigger:
-    workflow_dispatch: *github_combined_inputs
-  arguments:
-    - KOLLA_TAGS
-    - KOLLA_LIMIT
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-    - KAYOBE_AUTOMATION_PR_REMOTE
-    - KAYOBE_AUTOMATION_PR_GITHUB_USER
-    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-    - KAYOBE_AUTOMATION_PR_TYPE
-    - KAYOBE_AUTOMATION_PR_TITLE
-    - KAYOBE_AUTOMATION_PR_URL
-    - HOME
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
+  concurrency_group: overcloud
 
 github_run_overcloud_service_upgrade:
   file_name: run-overcloud-service-upgrade.yml
   trigger:
-    workflow_dispatch: *github_combined_inputs
-  arguments:
-    - KOLLA_TAGS
-    - KOLLA_LIMIT
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-    - KAYOBE_AUTOMATION_PR_REMOTE
-    - KAYOBE_AUTOMATION_PR_GITHUB_USER
-    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-    - KAYOBE_AUTOMATION_PR_TYPE
-    - KAYOBE_AUTOMATION_PR_TITLE
-    - KAYOBE_AUTOMATION_PR_URL
-    - HOME
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
+  concurrency_group: overcloud
 
 github_run_seed_host_configure:
   file_name: run-seed-host-configure.yml
   trigger:
-    workflow_dispatch: *github_combined_inputs
-  arguments:
-    - KOLLA_TAGS
-    - KOLLA_LIMIT
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
+  concurrency_group: seed
 
 github_run_seed_host_package_update:
   file_name: run-seed-host-package-update.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: seed
+
 
 github_run_seed_hypervisor_host_configure:
   file_name: run-seed-hypervisor-host-configure.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: seed
 
 github_run_seed_hypervisor_host_package_update:
   file_name: run-seed-hypervisor-host-package-update.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: seed
 
 github_run_seed_service_deploy:
   file_name: run-seed-service-deploy.yml
   trigger:
-    workflow_dispatch: *github_combined_inputs
-  arguments:
-    - KOLLA_TAGS
-    - KOLLA_LIMIT
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - KAYOBE_AUTOMATION_PR_TARGET_BRANCH
-    - KAYOBE_AUTOMATION_PR_REMOTE
-    - KAYOBE_AUTOMATION_PR_GITHUB_USER
-    - KAYOBE_AUTOMATION_PR_AUTH_TOKEN
-    - KAYOBE_AUTOMATION_PR_TYPE
-    - KAYOBE_AUTOMATION_PR_TITLE
-    - KAYOBE_AUTOMATION_PR_URL
-    - HOME
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
+  concurrency_group: seed
 
 github_run_seed_vm_provision:
   file_name: run-seed-vm-provision.yml
   trigger:
-    workflow_dispatch: *github_kayobe_inputs
-  arguments:
-    - KAYOBE_TAGS
-    - KAYOBE_LIMIT
-    - HOME
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: seed
 
 github_run_tempest:
   file_name: run-tempest.yml
   use_bespoke: true
+  test_suites: "{{ github_tempest_test_suites }}"

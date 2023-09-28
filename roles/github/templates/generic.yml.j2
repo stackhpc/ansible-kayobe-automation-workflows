@@ -4,13 +4,18 @@ jobs:
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
     permissions:
-      contents: read
-      packages: read
+      contents: %% 'write' if 'KAYOBE_AUTOMATION_PR_TYPE' in workflow.arguments | flatten  else 'read' %%
+      packages: %% 'read' if github_registry_url == 'ghcr.io' else 'none' %%
+      pull-requests: %% 'write' if 'KAYOBE_AUTOMATION_PR_TYPE' in workflow.arguments | flatten else 'none' %%
     container:
-      image: %% github_registry_url %%/%% github_image_name %%
+      image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
         username: %% github_registry_username %%
         password: %% github_registry_password %%
+    concurrency:
+      group: %% workflow.concurrency_group %%
+      cancel-in-progress: false
+    timeout-minutes: %% github_timeout %%
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
@@ -19,22 +24,26 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
+          path: kayobe-config
 
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
 <% endif %>
       - name: Symlink source checkout to expected location
-        run: sudo ln -s $PWD /src
+        run: sudo ln -s $PWD/kayobe-config /src
 
       - name: %% format_file_name(workflow.file_name, is_subtitle=true)  %%
         run: |
           /src/.automation/pipeline/%% workflow.file_name[4:-4] %%.sh
         <%- if workflow.arguments is defined +%>
         env:
-          KAYOBE_ENVIRONMENT: '%% kayobe_arguments.KAYOBE_ENVIRONMENT | default(default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          <%- for argument in workflow.arguments +%>
-          %% argument %%: '%% kayobe_arguments[argument] | default(default_kayobe_arguments[argument]) %%'
+          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
+          <%- for argument in workflow.arguments | flatten +%>
+          %% argument %%: '%% github_kayobe_arguments[argument] | default(github_default_kayobe_arguments[argument]) %%'
           <%- endfor +%>
+          HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
         <%- endif +%>
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%
