@@ -1,3 +1,11 @@
+<%- if github_environment_type == 'kayobe' -%>
+<%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
+<%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" -%>
+<%- set github_registry_password = "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ matrix.environment }}'}) -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', matrix.environment)] }}" }) -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', matrix.environment)] }}" }) -%>
+<%- endif +%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
 concurrency:
@@ -9,6 +17,11 @@ on:
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
+    <%- if github_environment_type == 'kayobe' +%>
+    strategy:
+      matrix:
+        environment: %% github_kayobe_environments %%
+    <%- endif +%>
     runs-on: %% github_runs_on %%
     permissions:
       contents: read
@@ -43,8 +56,8 @@ jobs:
             sudo -E -u stack bash -c '/src/.automation/pipeline/config-diff.sh ${{ github.event.pull_request.base.sha }}'
         env:
           KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+          KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
+          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
           HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
 
       - name: Show summary of changes
