@@ -5,7 +5,7 @@
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ matrix.environment }}'}) -%>
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', matrix.environment)] }}" }) -%>
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', matrix.environment)] }}" }) -%>
-<%- endif +%>
+<%- endif -%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
 concurrency:

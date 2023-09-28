@@ -2,7 +2,7 @@
 <%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
 <%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" -%>
 <%- set github_registry_password = "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" -%>
-<%- endif +%>
+<%- endif -%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
 on:
