@@ -3,10 +3,10 @@ github_default_kayobe_arguments:
   KAYOBE_ENVIRONMENT: production
   KAYOBE_VAULT_PASSWORD: !unsafe "${{ secrets.KAYOBE_VAULT_PASSWORD }}"
   KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: !unsafe "${{ secrets.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY }}"
-  KOLLA_LIMIT: !unsafe "${{ github.event.inputs.kollaLimit }}"
-  KOLLA_TAGS: !unsafe "${{ github.event.inputs.kollaTags }}"
-  KAYOBE_TAGS: !unsafe "${{ github.event.inputs.kayobeTags }}"
-  KAYOBE_LIMIT: !unsafe "${{ github.event.inputs.kayobeLimit }}"
+  KOLLA_LIMIT: !unsafe "${{ github.event.inputs.kolla_limit }}"
+  KOLLA_TAGS: !unsafe "${{ github.event.inputs.kolla_tags }}"
+  KAYOBE_TAGS: !unsafe "${{ github.event.inputs.kayobe_tags }}"
+  KAYOBE_LIMIT: !unsafe "${{ github.event.inputs.kayob_limit }}"
   KAYOBE_AUTOMATION_PR_TARGET_BRANCH: !unsafe ${{ github.event.ref }}
   KAYOBE_AUTOMATION_PR_REMOTE: !unsafe https://${KAYOBE_AUTOMATION_PR_GITHUB_USER}:${KAYOBE_AUTOMATION_PR_AUTH_TOKEN}@github.com/${{ github.repository }}
   KAYOBE_AUTOMATION_PR_GITHUB_USER: !unsafe ${{ github.actor }}

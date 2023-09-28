@@ -40,27 +40,27 @@ github_tempest_test_suites: |
   - tempest-full
 
 github_kayobe_limit_input: |
-  kayobeLimit:
+  kayobe_limit:
     description: |
       The ansible limit to use when running kayobe playbooks.
 
 github_kayobe_tags_input: |
-  kayobeTags:
+  kayobe_tags:
     description: |
       The ansible tags to use when running kayobe playbooks.
 
 github_kolla_limit_input: |
-  kollaLimit:
+  kolla_limit:
     description: |
       The ansible limit to use for kolla-ansible playbooks.
 
 github_kolla_tags_input: |
-  kollaTags:
+  kolla_tags:
     description: |
       The ansible tags to use when running kolla-ansible playbooks.
 
 github_kayobe_environment_input: |
-  kayobeEnvironment:
+  kayobe_environment:
     description: |
       Select the environment the kayobe workflow shall target.
     type: choice
