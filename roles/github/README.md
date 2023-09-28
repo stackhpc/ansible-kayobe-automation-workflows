@@ -36,6 +36,10 @@ The following variables can be used to make small adjustments to the composition
 
 `github_output_directory`: control the location where the workflows shall be written to.
 
+`github_environment_type`: control the type of environment support the workflows should be generated with. Either `none` for single environment deployment or `kayobe` for a kayobe based environment workflows.
+
+`github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_type` is not `none`.
+
 `github_runs_on`: control which runner can accept this workflow. See GitHub for more information on [runs-on](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on).
 
 `github_image_name`: name of the kayobe image defaults to `kayobe`.

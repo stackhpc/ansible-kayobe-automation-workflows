@@ -1,6 +1,10 @@
 ---
 github_output_directory: .github/workflows
 
+github_environment_type: none
+
+github_kayobe_environments: none
+
 github_runs_on: self-hosted
 
 github_registry_url: ghcr.io
@@ -54,6 +58,15 @@ github_kolla_tags_input: |
   kollaTags:
     description: |
       The ansible tags to use when running kolla-ansible playbooks.
+
+github_kayobe_environment_input: |
+  kayobeEnvironment:
+    description: |
+      Select the environment the kayobe workflow shall target.
+    type: choice
+    required: true
+    default: 'production'
+    options:
 
 github_workflows:
   - "{{ github_build_kayobe_image }}"
