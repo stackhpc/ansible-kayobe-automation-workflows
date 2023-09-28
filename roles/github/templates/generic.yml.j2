@@ -1,4 +1,3 @@
-<% include "header.yml.j2" +%>
 <%- if github_environment_type == 'kayobe' -%>
 <%- set github_runs_on = github_runs_on + ['${{ inputs.kayobe_environment }}'] -%>
 <%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', inputs.kayobe_environment)] }}" -%>
@@ -8,6 +7,7 @@
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
 <%- endif -%>
+<% include "header.yml.j2" +%>
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
