@@ -65,8 +65,8 @@ github_kayobe_environment_input: |
       Select the environment the kayobe workflow shall target.
     type: choice
     required: true
-    default: 'production'
-    options:
+    default: '{{ github_kayobe_environments | first }}'
+    options: {{ github_kayobe_environments }}
 
 github_workflows:
   - "{{ github_build_kayobe_image }}"
