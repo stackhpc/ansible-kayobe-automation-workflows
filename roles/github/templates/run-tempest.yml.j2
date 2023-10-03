@@ -77,7 +77,7 @@ jobs:
           KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
           KAYOBE_AUTOMATION_TEMPEST_LOADLIST: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST) %%'
           TEMPEST_PATTERN: '%% github_kayobe_arguments.TEMPEST_PATTERN | default(github_default_kayobe_arguments.TEMPEST_PATTERN) %%'
-          TEMPEST_OPENRC: "%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%"
+          TEMPEST_OPENRC: "%% github_kayobe_arguments.TEMPEST_OPENRC | default(github_default_kayobe_arguments.TEMPEST_OPENRC) %%"
           KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY: "%% github_registry_url %%"
           KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_USERNAME: '%% github_registry_username %%'
           KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD: "%% github_registry_password %%"
