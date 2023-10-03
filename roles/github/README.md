@@ -36,7 +36,7 @@ The following variables can be used to make small adjustments to the composition
 
 `github_output_directory`: control the location where the workflows shall be written to.
 
-`github_environment_type`: control the type of environment support the workflows should be generated with. Either `none` for single environment deployment or `kayobe` for a kayobe based environment workflows.
+`github_environment_selector`: control the type of environment support the workflows should be generated with. Either `none` for no environment, `single` for fixed environment or `input` whereby the environment is controlled at `workflow_dispatch`
 
 `github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_type` is not `none`.
 

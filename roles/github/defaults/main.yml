@@ -1,7 +1,7 @@
 ---
 github_output_directory: .github/workflows
 
-github_environment_type: none
+github_environment_selector: Null # Null | single | input
 
 github_kayobe_environments: []
 

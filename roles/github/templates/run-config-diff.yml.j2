@@ -1,4 +1,4 @@
-<%- if github_environment_type == 'kayobe' -%>
+<%- if github_environment_selector is not none -%>
 <%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
 <%- if github_registry_url != 'ghcr.io' -%>
 <%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" -%>
@@ -19,7 +19,7 @@ on:
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
-    <%- if github_environment_type == 'kayobe' +%>
+    <%- if github_environment_type == 'input' +%>
     strategy:
       matrix:
         environment: %% github_kayobe_environments %%
