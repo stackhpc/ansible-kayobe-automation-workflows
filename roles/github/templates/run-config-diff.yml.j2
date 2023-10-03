@@ -57,7 +57,9 @@ jobs:
         run: |
             sudo -E -u stack bash -c '/src/.automation/pipeline/config-diff.sh ${{ github.event.pull_request.base.sha }}'
         env:
+<% if github_environment_selector is not none %>
           KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+<% endif %>
           KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
           KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
           HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
