@@ -16,7 +16,7 @@ env:
 
 jobs:
   %% format_file_name(workflow.file_name) %%:
-    <%- if github_environment_type == 'input' +%>
+    <%- if github_environment_selector == 'input' +%>
     strategy:
       matrix:
         environment: %% github_kayobe_environments %%
