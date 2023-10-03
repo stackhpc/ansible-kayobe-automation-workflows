@@ -5,10 +5,10 @@
 <%- set github_registry_password = "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" -%>
 <%- endif -%>
 <%- set _ = workflow.update({"concurrency_group": "format('{0}-{1}', " + workflow.concurrency_group + ", '${{ inputs.kayobe_environment }}')" })  -%>
-<%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ inputs.kayobe_environment }}'}) -%>
-<%- set _ = github_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', inputs.kayobe_environment)] }}" }) -%>
-<%- set _ = github_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
-<%- set _ = github_kayobe_arguments.update({"TEMPEST_OPENRC": "${{ secrets[format('{0}_TEMPEST_OPENRC', inputs.kayobe_environment)] }}" }) -%>
+<%- set _ = github_default_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ inputs.kayobe_environment }}'}) -%>
+<%- set _ = github_default_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', inputs.kayobe_environment)] }}" }) -%>
+<%- set _ = github_default_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
+<%- set _ = github_default_kayobe_arguments.update({"TEMPEST_OPENRC": "${{ secrets[format('{0}_TEMPEST_OPENRC', inputs.kayobe_environment)] }}" }) -%>
 <%- endif -%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
