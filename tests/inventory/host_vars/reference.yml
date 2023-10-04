@@ -1,0 +1,22 @@
+---
+github_output_directory: ".github/reference"
+
+github_environment_selector: input
+
+github_kayobe_environments:
+  - production-gb-01
+  - testing-gb-01
+  - production-de-01
+  - testing-de-01
+
+github_runs_on:
+  - kayobe
+  - openstack
+
+github_registry:
+  url: pulp.infra.os.example.cloud
+  username: admin
+  password: ${{ secrets.REGISTRY_PASSWORD }}
+
+github_kayobe_arguments:
+  KAYOBE_VAULT_PASSWORD: !unsafe "${{ secrets.KAYOBE_VAULT_PASSWORD }}"

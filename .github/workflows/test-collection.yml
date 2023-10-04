@@ -7,6 +7,20 @@ jobs:
   test:
     name: Test github role
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name:
+          - none_default
+          - single_default
+          - input_default
+          - none_custom_registry
+          - single_custom_registry
+          - input_custom_registry
+          - none_custom_kayobe_argument
+          - single_custom_kayobe_argument
+          - input_custom_kayobe_argument
+          - reference
+
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v3
@@ -19,46 +33,13 @@ jobs:
       - name: Install Ansible
         run: pip3 install ansible
 
-      - name: Test the playbook [single environment].
-        run: "ansible-playbook tests/test.yml -e \"{'github_output_directory': '.github/workflows/single_environment'}\""
+      - name: Test the playbook ${{ matrix.name }}
+        run: "ansible-playbook tests/test.yml --limit ${{ matrix.name }}"
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
-      - name: Test the playbook [multiple environments].
-        run: "ansible-playbook tests/test.yml -e \"{'github_output_directory': '.github/workflows/multiple_environments', 'github_environment_type': 'kayobe', 'github_kayobe_environments': [production, staging]}\""
-        env:
-          ANSIBLE_FORCE_COLOR: '1'
-
-      - name: Test the playbook [single environment with custom registry].
-        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_registry_password': 'password123', 'github_output_directory': '.github/workflows/single_environment_registry'}\""
-        env:
-          ANSIBLE_FORCE_COLOR: '1'
-
-      - name: Test the playbook [multiple environments with custom registry].
-        run: "ansible-playbook tests/test.yml -e \"{'github_registry_url': 'registry.example.com', 'github_registry_password': password123', 'github_output_directory': '.github/workflows/multiple_environments_registry', 'github_environment_type': 'kayobe', 'github_kayobe_environments': [production, staging]}\""
-        env:
-          ANSIBLE_FORCE_COLOR: '1'
-
-      - name: Upload workflows produced [single environment]
+      - name: Upload workflows produced ${{ matrix.name }}
         uses: actions/upload-artifact@v3
         with:
-          name: github_kayobe_workflows_single_environment
-          path: tests/.github/workflows/single_environment
-
-      - name: Upload workflows produced [single environment with custom registry]
-        uses: actions/upload-artifact@v3
-        with:
-          name: github_kayobe_workflows_single_environment_registry
-          path: tests/.github/workflows/single_environment_registry
-
-      - name: Upload workflows produced [multiple environment]
-        uses: actions/upload-artifact@v3
-        with:
-          name: github_kayobe_workflows_multiple_environments
-          path: tests/.github/workflows/multiple_environments
-
-      - name: Upload workflows produced [multiple environment with custom registry]
-        uses: actions/upload-artifact@v3
-        with:
-          name: github_kayobe_workflows_multiple_environments_registry
-          path: tests/.github/workflows/multiple_environments_registry
+          name: format("github_kayobe_workflows_{0}", ${{ matrix.name }}
+          path: format("tests/.github/{0}", ${{ matrix.name }})
