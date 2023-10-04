@@ -7,11 +7,7 @@ github_kayobe_environments: []
 
 github_runs_on: [self-hosted]
 
-github_registry_url: ghcr.io
-
-github_registry_username: !unsafe "${{ github.actor }}"
-
-github_registry_password: !unsafe "${{ secrets.GITHUB_TOKEN }}"
+github_registry: {}
 
 github_image_name: kayobe
 

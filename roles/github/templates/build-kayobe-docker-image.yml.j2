@@ -1,9 +1,8 @@
 <%- if github_environment_selector == 'input' -%>
 <%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
-<%- if github_registry_url != 'ghcr.io' -%>
-<%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" -%>
-<%- set github_registry_password = "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" -%>
-<%- endif -%>
+<%- set _ = github_default_registry.update({"url": "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_registry.update({"username": "${{ vars[format('{0}_REGISTRY_USERNAME', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_registry.update({"password": "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" }) -%>
 <%- endif -%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
@@ -26,7 +25,7 @@ jobs:
       image: docker:24.0-git
     permissions:
       contents: read
-      packages: %% 'write' if github_registry_url == 'ghcr.io' else 'none' %%
+      packages: %% 'write' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
@@ -40,9 +39,9 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
-          registry: %% github_registry_url %%
-          username: %% github_registry_username %%
-          password: %% github_registry_password %%
+          registry: %% github_registry.url | default(github_default_registry.url) %%
+          username: %% github_registry.username | default(github_default_registry.username) %%
+          password: %% github_registry.password | default(github_default_registry.password) %%
 
 <% if github_buildx_enabled %>
       - name: Set up Docker Buildx
@@ -72,8 +71,8 @@ jobs:
              BASE_IMAGE=%% github_kayobe_base_image %%
           push: true
           tags: |
-            %% github_registry_url %%/%% github_image_name %%:latest
-            %% github_registry_url %%/%% github_image_name %%:${{ github.sha }}
+            %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:latest
+            %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:${{ github.sha }}
 <% if not github_buildx_enable_provenance %>
           provenance: false
 <% endif %>

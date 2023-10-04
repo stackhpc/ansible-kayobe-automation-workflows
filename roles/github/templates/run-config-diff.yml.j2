@@ -1,8 +1,7 @@
 <%- if github_environment_selector is not none -%>
-<%- if github_registry_url != 'ghcr.io' -%>
-<%- set github_registry_url = "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" -%>
-<%- set github_registry_password = "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" -%>
-<%- endif -%>
+<%- set _ = github_default_registry.update({"url": "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_registry.update({"username": "${{ vars[format('{0}_REGISTRY_USERNAME', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_registry.update({"password": "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" }) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', matrix.environment)] }}" }) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', matrix.environment)] }}" }) -%>
 <%- endif -%>
@@ -28,12 +27,12 @@ jobs:
     runs-on: %% github_runs_on %%
     permissions:
       contents: read
-      packages: %% 'read' if github_registry_url == 'ghcr.io' else 'none' %%
+      packages: %% 'read' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
     container:
-      image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
+      image: %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
-        username: %% github_registry_username %%
-        password: %% github_registry_password %%
+        username: %% github_registry.username | default(github_default_registry.username) %%
+        password: %% github_registry.password | default(github_default_registry.password) %%
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
