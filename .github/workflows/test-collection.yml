@@ -34,7 +34,7 @@ jobs:
         run: pip3 install ansible
 
       - name: Test the playbook ${{ matrix.name }}
-        run: "ansible-playbook tests/test.yml --limit ${{ matrix.name }}"
+        run: "ansible-playbook -i tests/inventory/hosts.yml tests/test.yml --limit ${{ matrix.name }}"
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
