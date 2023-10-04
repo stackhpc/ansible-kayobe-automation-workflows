@@ -41,5 +41,5 @@ jobs:
       - name: Upload workflows produced ${{ matrix.name }}
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ format("github_kayobe_workflows_{0}", matrix.name) }}
-          path: ${{ format("tests/.github/{0}", matrix.name) }}
+          name: "${{ format('github_kayobe_workflows_{0}', matrix.name) }}"
+          path: "${{ format('tests/.github/{0}', matrix.name) }}"
