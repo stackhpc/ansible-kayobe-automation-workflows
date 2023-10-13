@@ -90,7 +90,7 @@ github_workflows:
   - "{{ github_run_tempest }}"
 
 github_prepare_runner:
-  file_name: prepate-runner.yml
+  file_name: prepare-runner.yml
   use_bespoke: true
 
 github_build_kayobe_image:
