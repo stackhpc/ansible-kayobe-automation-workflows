@@ -1,9 +1,11 @@
-<%- if github_environment_selector == 'single' -%>
+<%- if github_environment_selector == 'input' -%>
 <%- set _ = github_default_registry.update({"url": "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" }) -%>
 <%- set _ = github_default_registry.update({"username": "${{ vars[format('{0}_REGISTRY_USERNAME', matrix.environment)] }}" }) -%>
 <%- set _ = github_default_registry.update({"password": "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" }) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', matrix.environment)] }}" }) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', matrix.environment)] }}" }) -%>
+<%- endif -%>
+<%- if github_environment_selector is not none -%>
 <%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
 <%- endif -%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
