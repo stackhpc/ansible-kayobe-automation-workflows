@@ -74,7 +74,7 @@ jobs:
              BASE_IMAGE=%% github_kayobe_base_image %%
           push: true
           tags: |
-            %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:latest
+            %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:%% github_image_tag %%
             %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:${{ github.sha }}
 <% if not github_buildx_enable_provenance %>
           provenance: false
