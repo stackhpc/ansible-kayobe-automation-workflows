@@ -30,7 +30,7 @@ on:
       tempest_pattern:
         description: |
           Limit tests to this regex. Takes precedence over testSuite.
-      <%- if github_environment_selector == 'kayobe' +%>
+      <%- if github_environment_selector == 'input' +%>
       %% github_kayobe_environment_input | flatten | join('') | indent(6) | trim %%
       <%- endif +%>
 
