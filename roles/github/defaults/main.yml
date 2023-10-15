@@ -11,7 +11,7 @@ github_registry: {}
 
 github_image_name: kayobe
 
-github_image_tag: "${{ needs.prepare-runner.outputs.openstack_release }}-latest"
+github_image_tag: !unsafe "${{ needs.prepare-runner.outputs.openstack_release }}-latest"
 
 github_kayobe_base_image: "quay.io/centos/centos:stream8"
 
