@@ -14,8 +14,10 @@ env:
   KAYOBE_USER_GID: 1000
 
 jobs:
+  prepare-runner:
+    uses: ./.github/workflows/prepare-runner.yml
   %% format_file_name(workflow.file_name) %%:
-    <%- if github_environment_selector == 'input' +%>
+    <%- if github_environment_selector == 'input' and (github_registry.share | default(github_default_registry.share)) is false +%>
     strategy:
       matrix:
         environment: %% github_kayobe_environments %%
@@ -26,6 +28,7 @@ jobs:
     permissions:
       contents: read
       packages: %% 'write' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
+    needs: prepare-runner
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
@@ -71,7 +74,7 @@ jobs:
              BASE_IMAGE=%% github_kayobe_base_image %%
           push: true
           tags: |
-            %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:latest
+            %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:%% github_image_tag %%
             %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:${{ github.sha }}
 <% if not github_buildx_enable_provenance %>
           provenance: false

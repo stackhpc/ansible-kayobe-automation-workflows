@@ -11,7 +11,7 @@ github_registry: {}
 
 github_image_name: kayobe
 
-github_image_tag: latest
+github_image_tag: !unsafe "${{ needs.prepare-runner.outputs.openstack_release }}-latest"
 
 github_kayobe_base_image: "quay.io/centos/centos:stream8"
 
@@ -65,6 +65,7 @@ github_kayobe_environment_input: |
     options: {{ github_kayobe_environments }}
 
 github_workflows:
+  - "{{ github_prepare_runner }}"
   - "{{ github_build_kayobe_image }}"
   - "{{ github_run_kolla_config_diff }}"
   - "{{ github_run_infra_vm_host_configure }}"
@@ -87,6 +88,10 @@ github_workflows:
   - "{{ github_run_seed_service_deploy }}"
   - "{{ github_run_seed_vm_provision }}"
   - "{{ github_run_tempest }}"
+
+github_prepare_runner:
+  file_name: prepare-runner.yml
+  use_bespoke: true
 
 github_build_kayobe_image:
   file_name: build-kayobe-docker-image.yml

@@ -1,0 +1,27 @@
+name: %% format_file_name(workflow.file_name, is_title=true) %%
+
+on:
+  workflow_call:
+    outputs:
+      openstack_release:
+        description: "The version of OpenStack/Kayobe to be used by the runner."
+        value: ${{ jobs.prepare-runner.outputs.openstack_release }}
+
+jobs:
+  prepare-runner:
+    runs-on: %% github_runs_on %%
+    container:
+      image: alpine:latest
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      openstack_release: ${{ steps.openstack_release.outputs.series }}
+    steps:
+      - name: Checkout kayobe config
+        uses: actions/checkout@v3
+
+      - name: Extract OpenStack Release
+        id: openstack_release
+        run: |
+          echo "series=$(awk -F'kayobe@' '{print $NF; exit}' requirements.txt | awk -F'/' '{print $NF; exit}')" >> $GITHUB_OUTPUT

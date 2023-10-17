@@ -13,6 +13,8 @@
 <% include "header.yml.j2" +%>
 
 jobs:
+  prepare-runner:
+    uses: ./.github/workflows/prepare-runner.yml
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
     permissions:
@@ -28,6 +30,7 @@ jobs:
       group: %% workflow.concurrency_group %%
       cancel-in-progress: false
     timeout-minutes: %% github_timeout %%
+    needs: prepare-runner
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%

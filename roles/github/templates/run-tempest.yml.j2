@@ -30,11 +30,13 @@ on:
       tempest_pattern:
         description: |
           Limit tests to this regex. Takes precedence over testSuite.
-      <%- if github_environment_selector == 'kayobe' +%>
+      <%- if github_environment_selector == 'input' +%>
       %% github_kayobe_environment_input | flatten | join('') | indent(6) | trim %%
       <%- endif +%>
 
 jobs:
+  prepare-runner:
+    uses: ./.github/workflows/prepare-runner.yml
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
     permissions:
@@ -49,6 +51,7 @@ jobs:
       group: %% workflow.concurrency_group %%
       cancel-in-progress: false
     timeout-minutes: %% github_timeout %%
+    needs: prepare-runner
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
