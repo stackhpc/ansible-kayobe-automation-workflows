@@ -3,6 +3,7 @@ github_default_registry:
   url: ghcr.io
   username: !unsafe "${{ github.actor }}"
   password: !unsafe "${{ secrets.GITHUB_TOKEN }}"
+  share: false
 
 github_default_kayobe_arguments:
   KAYOBE_ENVIRONMENT: production

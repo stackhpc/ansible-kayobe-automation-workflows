@@ -17,7 +17,7 @@ jobs:
   prepare-runner:
     uses: ./.github/workflows/prepare-runner.yml
   %% format_file_name(workflow.file_name) %%:
-    <%- if github_environment_selector == 'input' +%>
+    <%- if github_environment_selector == 'input' and (github_registry.share | default(github_default_registry.share)) is false +%>
     strategy:
       matrix:
         environment: %% github_kayobe_environments %%
