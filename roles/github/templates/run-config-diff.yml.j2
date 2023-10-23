@@ -21,7 +21,7 @@ jobs:
   prepare-runner:
     uses: ./.github/workflows/prepare-runner.yml
   %% format_file_name(workflow.file_name) %%:
-    <%- if github_environment_type is not none +%>
+    <%- if github_environment_selector is not none +%>
     strategy:
       matrix:
         environment: %% github_kayobe_environments %%
@@ -64,7 +64,6 @@ jobs:
           KAYOBE_ENVIRONMENT: '${{ matrix.environment }}'
 <% endif %>
           KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
           HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
 
       - name: Show summary of changes
