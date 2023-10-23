@@ -80,9 +80,6 @@ jobs:
           KAYOBE_AUTOMATION_TEMPEST_LOADLIST: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST) %%'
           TEMPEST_PATTERN: '%% github_kayobe_arguments.TEMPEST_PATTERN | default(github_default_kayobe_arguments.TEMPEST_PATTERN) %%'
           TEMPEST_OPENRC: "%% github_kayobe_arguments.TEMPEST_OPENRC | default(github_default_kayobe_arguments.TEMPEST_OPENRC) %%"
-          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY: "%% github_registry.url | default(github_default_registry.url) %%"
-          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_USERNAME: '%% github_registry.username | default(github_default_registry.username) %%'
-          KAYOBE_AUTOMATION_RALLY_DOCKER_REGISTRY_PASSWORD: "%% github_registry.password | default(github_default_registry.password) %%"
           HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
 
       - name: Print stdout
