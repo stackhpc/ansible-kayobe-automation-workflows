@@ -16,7 +16,7 @@ jobs:
       contents: read
       packages: read
     outputs:
-      openstack_release: ${{ steps.openstack_release.outputs.series }}
+      openstack_release: ${{ steps.openstack_release.outputs.openstack_release }}
     steps:
       - name: Checkout kayobe config
         uses: actions/checkout@v3
@@ -24,4 +24,5 @@ jobs:
       - name: Extract OpenStack Release
         id: openstack_release
         run: |
-          echo "series=$(awk -F'kayobe@' '{print $NF; exit}' requirements.txt | awk -F'/' '{print $NF; exit}')" >> $GITHUB_OUTPUT
+          BRANCH=$(awk -F'=' '/defaultbranch/ {print $2}' .gitreview)
+          echo "openstack_release=${BRANCH}" | sed "s|stable/||" >> $GITHUB_OUTPUT
