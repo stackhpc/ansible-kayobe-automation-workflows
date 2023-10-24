@@ -4,13 +4,13 @@
 <%- set _ = github_default_registry.update({"url": "${{ vars[format('{0}_REGISTRY_URL', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_default_registry.update({"username": "${{ vars[format('{0}_REGISTRY_USERNAME', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_default_registry.update({"password": "${{ secrets[format('{0}_REGISTRY_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
-<%- set _ = github_default_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ inputs.kayobe_environment }}'}) -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ inputs.kayobe_environment }}'}) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_default_kayobe_arguments.update({"TEMPEST_OPENRC": "${{ secrets[format('{0}_TEMPEST_OPENRC', inputs.kayobe_environment)] }}" }) -%>
 <%- endif -%>
 <%- if github_environment_selector == 'single' -%>
-<%- set _ = github_default_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": github_kayobe_environments[0] }) -%>
+<%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": github_kayobe_environments[0] }) -%>
 <%- endif -%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
@@ -73,7 +73,7 @@ jobs:
           /src/.automation/pipeline/tempest.sh -e ansible_user=stack
         env:
 <% if github_environment_selector is not none %>
-          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
+          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT %%'
 <% endif %>
           KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
           KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
