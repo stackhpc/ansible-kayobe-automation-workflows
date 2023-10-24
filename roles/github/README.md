@@ -36,9 +36,9 @@ The following variables can be used to make small adjustments to the composition
 
 `github_output_directory`: control the location where the workflows shall be written to.
 
-`github_environment_selector`: control the type of environment support the workflows should be generated with. Either `none` for no environment, `single` for fixed environment or `input` whereby the environment is controlled at `workflow_dispatch`
+`github_environment_selector`: control the type of environment support the workflows should be generated with. Either `single` for fixed environment or `input` whereby the environment is controlled at `workflow_dispatch`. No environment is the default by setting `github_environment_selector` to no value or `Null`.
 
-`github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_selector` is not `none`.
+`github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_selector` is not `input` or `single`.
 
 `github_runs_on`: control which runner can accept this workflow. See GitHub for more information on [runs-on](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on).
 
@@ -50,11 +50,11 @@ The following variables can be used to make small adjustments to the composition
 
 `github_kayobe_base_image`: select the base image used when building the kayobe docker image. Default is `quay.io/centos/centos:stream8` supports OpenStack Wallaby, Xena and Yoga. Zed and higher would require `quay.io/rockylinux/rockylinux:9`.
 
-`github_kayobe_arguments`: a dictionary of arguments that can be used to override the default arguments found within `vars/main.yml`. For example if you wanted to change the value of `KAYOBE_ENVIRONMENT` from its default of `production` you can simply add `KAYOBE_ENVIRONMENT` to this dictionary and it will take precedence over the defaults.
+`github_kayobe_arguments`: a dictionary of arguments that can be used to override the default arguments found within `vars/main.yml`. For example if you wanted to change the value of `KAYOBE_AUTOMATION_PR_TITLE` from its default, you can do by simply adding `KAYOBE_AUTOMATION_PR_TITLE` to this dictionary and it will take precedence over the default.
 
 `github_*_hook:` see section [Template Hooks](#template-hooks)  for information about this variables
 
-`github_buildx_enable`: In some deployments the build kayobe docker image workflow has had difficulties successfully pushing the image to container registries such as Pulp if buildx has been used. It situations where failure to push images is been experienced a user might wish to disable buildx. Buildx is enabled by default. 
+`github_buildx_enable`: In some deployments the build kayobe docker image workflow has had difficulties successfully pushing the image to container registries such as Pulp if buildx has been used. It situations where failure to push images is been experienced a user might wish to disable buildx. Buildx is disabled by default.
 
 `github_buildx_inline_config`: provide configuration parameters to buildx. Useful for connecting to insecure docker registry.
 
@@ -143,7 +143,7 @@ The following example playbook will generate a series of `reference` workflows w
 - name: Write Kayobe Automation Workflows for GitHub
   hosts: localhost
   roles:
-    - stackhpc.kayobe_automation_workflows.github
+    - stackhpc.kayobe_workflows.github
 ```
 
 License
