@@ -38,7 +38,7 @@ The following variables can be used to make small adjustments to the composition
 
 `github_environment_selector`: control the type of environment support the workflows should be generated with. Either `single` for fixed environment or `input` whereby the environment is controlled at `workflow_dispatch`. No environment is the default by setting `github_environment_selector` to no value or `Null`.
 
-`github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_selector` is not `input` or `single`.
+`github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_selector` is `input` or `single`.
 
 `github_runs_on`: control which runner can accept this workflow. See GitHub for more information on [runs-on](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on).
 
