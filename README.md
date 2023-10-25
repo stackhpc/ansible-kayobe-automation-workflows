@@ -1,6 +1,6 @@
 # Ansible Collection - stackhpc.kayobe_workflows
 
-This repository contains `stackhpc.kayobe_workflows` an Ansible Collection. The collection currently includes a role for generating workflows that utilise [stackhpc/kayobe-workflows](https://github.com/stackhpc/kayobe-automation)https://github.com/stackhpc/kayobe-automation within GitHub Actions.
+This repository contains `stackhpc.kayobe_workflows` an Ansible Collection. The collection currently includes a role for generating workflows that utilise [stackhpc/kayobe-automation](https://github.com/stackhpc/kayobe-automation) within GitHub Actions.
 
 ## Included content
 
