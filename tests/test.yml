@@ -1,5 +1,5 @@
 ---
 - name: Test `stackhpc.kayobe_automation`
-  hosts: localhost
+  hosts: all
   roles:
     - github

@@ -1,0 +1,9 @@
+---
+github_output_directory: .github/input_custom_registry
+
+github_environment_selector: input
+
+github_kayobe_environments: [prod-gb-01, test-gb-01]
+
+github_registry:
+  url: "pulp.example.com"

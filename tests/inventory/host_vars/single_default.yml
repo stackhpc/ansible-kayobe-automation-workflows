@@ -1,0 +1,6 @@
+---
+github_output_directory: .github/single_default
+
+github_environment_selector: single
+
+github_kayobe_environments: [prod-gb-01]

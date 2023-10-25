@@ -1,0 +1,9 @@
+---
+github_output_directory: .github/input_custom_kayobe_argument
+
+github_environment_selector: input
+
+github_kayobe_environments: [prod-gb-01, test-gb-01]
+
+github_kayobe_arguments:
+  KAYOBE_VAULT_PASSWORD: !unsafe "${{ secrets.SUPER_SECRET_KAYOBE_VAULT_PASSWORD }}"

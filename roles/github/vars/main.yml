@@ -1,12 +1,17 @@
 ---
+github_default_registry:
+  url: ghcr.io
+  username: !unsafe "${{ github.actor }}"
+  password: !unsafe "${{ secrets.GITHUB_TOKEN }}"
+  share: false
+
 github_default_kayobe_arguments:
-  KAYOBE_ENVIRONMENT: production
   KAYOBE_VAULT_PASSWORD: !unsafe "${{ secrets.KAYOBE_VAULT_PASSWORD }}"
   KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: !unsafe "${{ secrets.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY }}"
-  KOLLA_LIMIT: !unsafe "${{ github.event.inputs.kollaLimit }}"
-  KOLLA_TAGS: !unsafe "${{ github.event.inputs.kollaTags }}"
-  KAYOBE_TAGS: !unsafe "${{ github.event.inputs.kayobeTags }}"
-  KAYOBE_LIMIT: !unsafe "${{ github.event.inputs.kayobeLimit }}"
+  KOLLA_LIMIT: !unsafe "${{ github.event.inputs.kolla_limit }}"
+  KOLLA_TAGS: !unsafe "${{ github.event.inputs.kolla_tags }}"
+  KAYOBE_TAGS: !unsafe "${{ github.event.inputs.kayobe_tags }}"
+  KAYOBE_LIMIT: !unsafe "${{ github.event.inputs.kayobe_limit }}"
   KAYOBE_AUTOMATION_PR_TARGET_BRANCH: !unsafe ${{ github.event.ref }}
   KAYOBE_AUTOMATION_PR_REMOTE: !unsafe https://${KAYOBE_AUTOMATION_PR_GITHUB_USER}:${KAYOBE_AUTOMATION_PR_AUTH_TOKEN}@github.com/${{ github.repository }}
   KAYOBE_AUTOMATION_PR_GITHUB_USER: !unsafe ${{ github.actor }}
@@ -14,8 +19,9 @@ github_default_kayobe_arguments:
   KAYOBE_AUTOMATION_PR_TYPE: github
   KAYOBE_AUTOMATION_PR_TITLE: !unsafe "[kayobe-automation] ${{ github.workflow }} #${{ github.run_id }}"
   KAYOBE_AUTOMATION_PR_URL: !unsafe https://api.github.com/repos/${{ github.repository }}/pulls
-  KAYOBE_AUTOMATION_TEMPEST_LOADLIST: !unsafe "${{ github.event.inputs.testSuite }}"
-  TEMPEST_PATTERN: !unsafe "${{ github.event.inputs.tempestPattern }}"
+  KAYOBE_AUTOMATION_TEMPEST_LOADLIST: !unsafe "${{ github.event.inputs.test_suite }}"
+  TEMPEST_PATTERN: !unsafe "${{ github.event.inputs.tempest_pattern }}"
+  TEMPEST_OPENRC: !unsafe "${{ secrets.TEMPEST_OPENRC }}"
   HOME: /stack
 
 github_kayobe_dispatch_inputs:

@@ -1,0 +1,5 @@
+---
+github_output_directory: .github/none_custom_kayobe_argument
+
+github_kayobe_arguments:
+  KAYOBE_VAULT_PASSWORD: !unsafe "${{ secrets.SUPER_SECRET_KAYOBE_VAULT_PASSWORD }}"

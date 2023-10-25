@@ -1,3 +1,13 @@
+<%- if github_environment_selector == 'input' -%>
+<%- set _ = github_default_registry.update({"url": "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_registry.update({"username": "${{ vars[format('{0}_REGISTRY_USERNAME', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_registry.update({"password": "${{ secrets[format('{0}_REGISTRY_PASSWORD', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', matrix.environment)] }}" }) -%>
+<%- set _ = github_default_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', matrix.environment)] }}" }) -%>
+<%- endif -%>
+<%- if github_environment_selector is not none -%>
+<%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
+<%- endif -%>
 name: %% format_file_name(workflow.file_name, is_title=true) %%
 
 concurrency:
@@ -8,16 +18,24 @@ on:
   pull_request:
 
 jobs:
+  prepare-runner:
+    uses: ./.github/workflows/prepare-runner.yml
   %% format_file_name(workflow.file_name) %%:
+    <%- if github_environment_selector is not none +%>
+    strategy:
+      matrix:
+        environment: %% github_kayobe_environments %%
+    <%- endif +%>
     runs-on: %% github_runs_on %%
     permissions:
       contents: read
-      packages: %% 'read' if github_registry_url == 'ghcr.io' else 'none' %%
+      packages: %% 'read' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
     container:
-      image: %% github_registry_url %%/%% github_image_name %%:%% github_image_tag %%
+      image: %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
-        username: %% github_registry_username %%
-        password: %% github_registry_password %%
+        username: %% github_registry.username | default(github_default_registry.username) %%
+        password: %% github_registry.password | default(github_default_registry.password) %%
+    needs: prepare-runner
     steps:
 <% if github_checkout_hook | length >= 1 %>
       %% github_checkout_hook | indent(width=6, first=false) %%
@@ -42,9 +60,10 @@ jobs:
         run: |
             sudo -E -u stack bash -c '/src/.automation/pipeline/config-diff.sh ${{ github.event.pull_request.base.sha }}'
         env:
-          KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT | default(github_default_kayobe_arguments.KAYOBE_ENVIRONMENT) %%'
-          KAYOBE_VAULT_PASSWORD: '%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%'
-          KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%'
+<% if github_environment_selector is not none %>
+          KAYOBE_ENVIRONMENT: '${{ matrix.environment }}'
+<% endif %>
+          KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
           HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
 
       - name: Show summary of changes

@@ -7,6 +7,20 @@ jobs:
   test:
     name: Test github role
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name:
+          - none_default
+          - single_default
+          - input_default
+          - none_custom_registry
+          - single_custom_registry
+          - input_custom_registry
+          - none_custom_kayobe_argument
+          - single_custom_kayobe_argument
+          - input_custom_kayobe_argument
+          - reference
+
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v3
@@ -19,13 +33,13 @@ jobs:
       - name: Install Ansible
         run: pip3 install ansible
 
-      - name: Test the playbook.
-        run: ansible-playbook tests/test.yml
+      - name: Test the playbook ${{ matrix.name }}
+        run: "ansible-playbook -i tests/inventory/hosts.yml tests/test.yml --limit ${{ matrix.name }}"
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
-      - name: Upload workflows produced
+      - name: Upload workflows produced ${{ matrix.name }}
         uses: actions/upload-artifact@v3
         with:
-          name: github_kayobe_workflows
-          path: tests/.github/workflows
+          name: "${{ format('github_kayobe_workflows_{0}', matrix.name) }}"
+          path: "${{ format('tests/.github/{0}', matrix.name) }}"

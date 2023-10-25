@@ -4,3 +4,4 @@ exclude_paths:
 
 skip_list:
   - galaxy[no-changelog]
+  - meta-runtime[unsupported-version]

@@ -1,0 +1,28 @@
+name: %% format_file_name(workflow.file_name, is_title=true) %%
+
+on:
+  workflow_call:
+    outputs:
+      openstack_release:
+        description: "The version of OpenStack/Kayobe to be used by the runner."
+        value: ${{ jobs.prepare-runner.outputs.openstack_release }}
+
+jobs:
+  prepare-runner:
+    runs-on: %% github_runs_on %%
+    container:
+      image: alpine:latest
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      openstack_release: ${{ steps.openstack_release.outputs.openstack_release }}
+    steps:
+      - name: Checkout kayobe config
+        uses: actions/checkout@v3
+
+      - name: Extract OpenStack Release
+        id: openstack_release
+        run: |
+          BRANCH=$(awk -F'=' '/defaultbranch/ {print $2}' .gitreview)
+          echo "openstack_release=${BRANCH}" | sed "s|stable/||" >> $GITHUB_OUTPUT
