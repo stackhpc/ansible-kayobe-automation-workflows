@@ -7,3 +7,5 @@ github_kayobe_environments: [prod-gb-01]
 
 github_registry:
   url: "pulp.example.com"
+  username: "admin"
+  password: !unsafe "${{ secrets.pulp_password }}"

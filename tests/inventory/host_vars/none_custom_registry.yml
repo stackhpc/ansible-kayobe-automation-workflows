@@ -3,3 +3,5 @@ github_output_directory: .github/none_custom_registry
 
 github_registry:
   url: "pulp.example.com"
+  username: "admin"
+  password: !unsafe "${{ secrets.pulp_password }}"
