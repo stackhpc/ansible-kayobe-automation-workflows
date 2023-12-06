@@ -16,7 +16,8 @@ github_runs_on:
 github_registry:
   url: pulp.infra.os.example.cloud
   username: admin
-  password: ${{ secrets.REGISTRY_PASSWORD }}
+  password: !unsafe ${{ secrets.REGISTRY_PASSWORD }}
+  share: true
 
 github_kayobe_arguments:
   KAYOBE_VAULT_PASSWORD: !unsafe "${{ secrets.KAYOBE_VAULT_PASSWORD }}"

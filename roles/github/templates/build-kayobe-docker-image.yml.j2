@@ -1,4 +1,4 @@
-<%- if github_environment_selector == 'input' -%>
+<%- if github_environment_selector == 'input' and (github_registry.share | default(github_default_registry.share)) is false -%>
 <%- set github_runs_on = github_runs_on + ['${{ matrix.environment }}'] -%>
 <%- set _ = github_default_registry.update({"url": "${{ vars[format('{0}_REGISTRY_URL', matrix.environment)] }}" }) -%>
 <%- set _ = github_default_registry.update({"username": "${{ vars[format('{0}_REGISTRY_USERNAME', matrix.environment)] }}" }) -%>
