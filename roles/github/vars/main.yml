@@ -1,8 +1,8 @@
 ---
 github_default_registry:
-  url: ghcr.io
-  username: !unsafe "${{ github.actor }}"
-  password: !unsafe "${{ secrets.GITHUB_TOKEN }}"
+  url: !unsafe "${{ vars.REGISTRY_URL }}"
+  username: !unsafe "${{ vars.REGISTRY_USERNAME }}"
+  password: !unsafe "${{ secrets.REGISTRY_PASSWORD }}"
   share: false
 
 github_default_kayobe_arguments:
