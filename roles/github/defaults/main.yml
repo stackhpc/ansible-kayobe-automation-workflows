@@ -31,6 +31,8 @@ github_buildx_enable_provenance: false
 
 github_timeout: 360
 
+github_octavia_certificates_expiry_time: 30
+
 github_tempest_test_suites: |
   - default
   - tempest-full
@@ -74,6 +76,7 @@ github_workflows:
   - "{{ github_run_infra_vm_host_package_update }}"
   - "{{ github_run_infra_vm_provision }}"
   - "{{ github_run_infra_vm_service_deploy }}"
+  - "{{ github_run_kolla_ansible_octavia_certificates }}"
   - "{{ github_run_network_connectivity_check }}"
   - "{{ github_run_overcloud_container_image_pull }}"
   - "{{ github_run_overcloud_database_backup }}"
@@ -130,6 +133,15 @@ github_run_infra_vm_service_deploy:
     workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
   concurrency_group: infra
+
+github_run_kolla_ansible_octavia_certificates:
+  file_name: run-kolla-ansible-octavia-certificates-check-expiry.yml
+  use_bespoke: true
+  expiry_time: "{{ github_octavia_certificates_expiry_time }}"
+  trigger:
+    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
+  arguments: "{{ github_kayobe_task_arguments }}"
+  concurrency_group: overcloud
 
 github_run_network_connectivity_check:
   file_name: run-network-connectivity-check.yml
