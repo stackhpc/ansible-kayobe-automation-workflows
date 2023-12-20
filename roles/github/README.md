@@ -71,6 +71,8 @@ github_buildx_inline_config: |
 
 `github_tempest_test_suites`: provide a list of load lists to be made available within the drop-down list for running tempest. Defaults to `default` and `tempest-full`.
 
+If you are using the workflow `github_run_kolla_ansible_octavia_certificates` to check for the expiry of Octavia Amphora certificates, by default it will allow for manual execution via workflow_dispatch. You can change this to run automatically on a schedule by setting `github_octavia_certificates_schedule` to a cron schedule. If you want to change the number of days checked, set the variable `github_default_octavia_certificates_expiry_time`.
+
 If you wish to make more impactful changes such as which workflows are built and what they contain then see the list of dictionaries called `workflows` in `defaults/main.yml`
 
 `github_workflows:` is a list of dictionaries that contains each of the workflows described above. A given list element is made up of the following:

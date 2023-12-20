@@ -59,7 +59,7 @@ jobs:
 
       - name: Check Octavia certificates expiry
         run: |
-          /src/.automation/pipeline/kolla-ansible-run.sh "octavia-certificates --check-expiry %% workflow.expiry_time %%"
+          /src/.automation/pipeline/kolla-ansible-run.sh "octavia-certificates --check-expiry <%- if github_octavia_certificates_schedule %> %% workflow.expiry_time %% <%- else %> ${{ inputs.expiry_time }} <%- endif -%>"
         env:
 <% if github_environment_selector is not none %>
           KAYOBE_ENVIRONMENT: '%% github_kayobe_arguments.KAYOBE_ENVIRONMENT %%'
