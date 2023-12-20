@@ -68,6 +68,17 @@ github_kayobe_environment_input: |
     options: {{ github_kayobe_environments }}
   {%- endif -%}
 
+github_octavia_certificates_expiry_time_input: |
+  {%- if github_environment_selector == 'input' -%}
+  expiry_time:
+    description: |
+      Check if the Octavia Amphora certificates will expire within this
+      number of days (integer).
+    type: string
+    required: true
+    default: '{{ github_octavia_certificates_expiry_time }}'
+  {%- endif -%}
+
 github_workflows:
   - "{{ github_prepare_runner }}"
   - "{{ github_build_kayobe_image }}"
@@ -139,8 +150,7 @@ github_run_kolla_ansible_octavia_certificates:
   use_bespoke: true
   expiry_time: "{{ github_octavia_certificates_expiry_time }}"
   trigger:
-    workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
-  arguments: "{{ github_kayobe_task_arguments }}"
+    workflow_dispatch: "{{ github_octavia_certificates_expiry_time_input }}"
   concurrency_group: overcloud
 
 github_run_network_connectivity_check:
