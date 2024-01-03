@@ -1,6 +1,10 @@
 ---
 github_output_directory: .github/workflows
 
+github_kayobe_user_id: 1000
+
+github_kayobe_group_id: 1000
+
 github_environment_selector:
 
 github_kayobe_environments: []

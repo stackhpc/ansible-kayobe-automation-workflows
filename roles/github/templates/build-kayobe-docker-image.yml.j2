@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 env:
-  KAYOBE_USER_UID: 1000
-  KAYOBE_USER_GID: 1000
+  KAYOBE_USER_UID: %% github_kayobe_user_id %%
+  KAYOBE_USER_GID: %% github_kayobe_group_id %%
 
 jobs:
   prepare-runner:
