@@ -36,6 +36,10 @@ The following variables can be used to make small adjustments to the composition
 
 `github_output_directory`: control the location where the workflows shall be written to.
 
+`github_kayobe_user_id`: set the user id when building the kayobe docker image. Default is `1000`
+
+`github_kayobe_group_id`: set the group id when building the kayobe docker image. Default is `1000` 
+
 `github_environment_selector`: control the type of environment support the workflows should be generated with. Either `single` for fixed environment or `input` whereby the environment is controlled at `workflow_dispatch`. No environment is the default by setting `github_environment_selector` to no value or `Null`.
 
 `github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_selector` is `input` or `single`.
