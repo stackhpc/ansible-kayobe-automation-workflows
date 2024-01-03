@@ -50,6 +50,8 @@ The following variables can be used to make small adjustments to the composition
 
 `github_kayobe_base_image`: select the base image used when building the kayobe docker image. Default is `quay.io/centos/centos:stream8` supports OpenStack Wallaby, Xena and Yoga. Zed and higher would require `quay.io/rockylinux/rockylinux:9`.
 
+`github_kayobe_http_proxy`: specify a HTTP proxy to be used during the kayobe container image build. The same setting is applied for HTTPS.
+
 `github_kayobe_arguments`: a dictionary of arguments that can be used to override the default arguments found within `vars/main.yml`. For example if you wanted to change the value of `KAYOBE_AUTOMATION_PR_TITLE` from its default, you can do by simply adding `KAYOBE_AUTOMATION_PR_TITLE` to this dictionary and it will take precedence over the default.
 
 `github_*_hook:` see section [Template Hooks](#template-hooks)  for information about this variables

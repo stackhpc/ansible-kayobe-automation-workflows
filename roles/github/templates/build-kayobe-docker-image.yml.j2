@@ -68,10 +68,14 @@ jobs:
           file: ./docker-image-build/.automation/docker/kayobe/Dockerfile
           context: docker-image-build
           build-args: |
-             KAYOBE_DOCKER_SSH_CONFIG_PATH=.automation/docker/kayobe/ssh_config
-             KAYOBE_USER_UID=${{ env.KAYOBE_USER_UID }}
-             KAYOBE_USER_GID=${{ env.KAYOBE_USER_UID }}
-             BASE_IMAGE=%% github_kayobe_base_image %%
+            KAYOBE_DOCKER_SSH_CONFIG_PATH=.automation/docker/kayobe/ssh_config
+            KAYOBE_USER_UID=${{ env.KAYOBE_USER_UID }}
+            KAYOBE_USER_GID=${{ env.KAYOBE_USER_UID }}
+            BASE_IMAGE=%% github_kayobe_base_image %%
+<% if github_kayobe_http_proxy | length >= 1 %>
+            http_proxy=%% github_kayobe_http_proxy %%
+            https_proxy=%% github_kayobe_http_proxy %%
+<% endif %>
           push: true
           tags: |
             %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:%% github_image_tag %%
