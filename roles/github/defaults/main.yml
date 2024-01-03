@@ -9,7 +9,7 @@ github_environment_selector:
 
 github_kayobe_environments: []
 
-github_runs_on: [self-hosted]
+github_runs_on: [kayobe, openstack]
 
 github_registry: {}
 

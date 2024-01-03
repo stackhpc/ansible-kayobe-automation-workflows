@@ -44,7 +44,7 @@ The following variables can be used to make small adjustments to the composition
 
 `github_kayobe_environments`: list of environments the workflows should target. Only has effect when `github_environment_selector` is `input` or `single`.
 
-`github_runs_on`: control which runner can accept this workflow. See GitHub for more information on [runs-on](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on).
+`github_runs_on`: control which runner can accept this workflow. Default is `[kayobe, openstack]` See GitHub for more information on [runs-on](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on).
 
 `github_image_name`: name of the kayobe image defaults to `kayobe`.
 
