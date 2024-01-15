@@ -1,9 +1,11 @@
 <%- if github_environment_selector == 'input' -%>
-<%- set github_runs_on = github_runs_on + ['${{ inputs.kayobe_environment }}'] -%>
-<%- set _ = workflow.update({"concurrency_group": "format('{0}-{1}', " + workflow.concurrency_group + ", '${{ inputs.kayobe_environment }}')" })  -%>
+<%- if (github_registry.share | default(github_default_registry.share)) is false -%>
 <%- set _ = github_default_registry.update({"url": "${{ vars[format('{0}_REGISTRY_URL', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_default_registry.update({"username": "${{ vars[format('{0}_REGISTRY_USERNAME', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_default_registry.update({"password": "${{ secrets[format('{0}_REGISTRY_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
+<%- endif -%>
+<%- set github_runs_on = github_runs_on + ['${{ inputs.kayobe_environment }}'] -%>
+<%- set _ = workflow.update({"concurrency_group": "format('{0}-{1}', " + workflow.concurrency_group + ", '${{ inputs.kayobe_environment }}')" })  -%>
 <%- set _ = github_kayobe_arguments.update({"KAYOBE_ENVIRONMENT": '${{ inputs.kayobe_environment }}'}) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_AUTOMATION_SSH_PRIVATE_KEY": "${{ secrets[format('{0}_KAYOBE_AUTOMATION_SSH_PRIVATE_KEY', inputs.kayobe_environment)] }}" }) -%>
 <%- set _ = github_default_kayobe_arguments.update({"KAYOBE_VAULT_PASSWORD": "${{ secrets[format('{0}_KAYOBE_VAULT_PASSWORD', inputs.kayobe_environment)] }}" }) -%>
