@@ -79,9 +79,10 @@ github_octavia_certificates_input: |
     type: string
     required: true
     default: '{{ github_default_octavia_certificates_expiry_time }}'
-  {%- endif -%}
 
-github_workflows:
+github_workflows: "{{ github_workflows_default + github_workflows_extra }}"
+
+github_workflows_default:
   - "{{ github_prepare_runner }}"
   - "{{ github_build_kayobe_image }}"
   - "{{ github_run_kolla_config_diff }}"
@@ -105,6 +106,8 @@ github_workflows:
   - "{{ github_run_seed_service_deploy }}"
   - "{{ github_run_seed_vm_provision }}"
   - "{{ github_run_tempest }}"
+
+github_workflows_extra: []
 
 github_prepare_runner:
   file_name: prepare-runner.yml
