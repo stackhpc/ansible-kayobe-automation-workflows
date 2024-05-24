@@ -159,7 +159,9 @@ github_run_kolla_ansible_octavia_certificates:
   file_name: run-kolla-ansible-octavia-certificates-check-expiry.yml
   use_bespoke: true
   expiry_time: "{{ github_default_octavia_certificates_expiry_time }}"
-  trigger: "{{ github_octavia_certificates_workflow_dispatch_trigger | combine(github_octavia_certificates_schedule_trigger) if github_octavia_certificates_schedule else github_octavia_certificates_workflow_dispatch_trigger }}"
+  trigger: >-
+    {{ github_octavia_certificates_workflow_dispatch_trigger | combine(github_octavia_certificates_schedule_trigger)
+    if github_octavia_certificates_schedule else github_octavia_certificates_workflow_dispatch_trigger }}
   concurrency_group: overcloud
 
 github_run_network_connectivity_check:
