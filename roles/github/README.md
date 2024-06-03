@@ -52,7 +52,7 @@ The following variables can be used to make small adjustments to the composition
 
 `github_registry`: dictionary containing keys that correspond to `url`, `username`, `password` and `share` for the registry to be used by the workflows. By default it uses repository variables and settings `REGISTRY_URL`, `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`. The key `share` is to indiciate if the registry is shared between environments.
 
-`github_kayobe_base_image`: select the base image used when building the kayobe docker image. Default is `quay.io/centos/centos:stream8` supports OpenStack Wallaby, Xena and Yoga. Zed and higher would require `quay.io/rockylinux/rockylinux:9`.
+`github_kayobe_base_image`: select the base image used when building the kayobe docker image. Default is `quay.io/rockylinux/rockylinux:9`.
 
 `github_kayobe_arguments`: a dictionary of arguments that can be used to override the default arguments found within `vars/main.yml`. For example if you wanted to change the value of `KAYOBE_AUTOMATION_PR_TITLE` from its default, you can do by simply adding `KAYOBE_AUTOMATION_PR_TITLE` to this dictionary and it will take precedence over the default.
 
