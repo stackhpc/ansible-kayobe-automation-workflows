@@ -18,9 +18,11 @@ on:
     - cron: '{{ workflow.trigger['schedule']['cron'] }}'
   {%- elif trigger_name == 'workflow_dispatch' +%}
   workflow_dispatch:
-    {%- if workflow.trigger['workflow_dispatch'] is not none +%}
+    {%- if workflow.trigger['workflow_dispatch'] is defined +%}
     inputs:
+      {%- if workflow.trigger['workflow_dispatch'] | length > 0 +%}
       {{ workflow.trigger['workflow_dispatch'] | flatten | join('') | indent(6) | trim }}
+      {%- endif -%}
     {%- if github_environment_selector == 'input' +%}
       {{ github_kayobe_environment_input | flatten | join('') | indent(6) | trim }}
     {%- endif +%}

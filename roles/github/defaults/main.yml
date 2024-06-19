@@ -85,6 +85,7 @@ github_workflows:
   - "{{ github_run_overcloud_host_package_update }}"
   - "{{ github_run_overcloud_inventory_discover }}"
   - "{{ github_run_overcloud_provision }}"
+  - "{{ github_run_pulp_container_sync }}"
   - "{{ github_run_overcloud_service_deploy }}"
   - "{{ github_run_overcloud_service_upgrade }}"
   - "{{ github_run_seed_host_configure }}"
@@ -184,6 +185,13 @@ github_run_overcloud_provision:
   arguments: "{{ github_kayobe_task_arguments }}"
   concurrency_group: overcloud
 
+github_run_pulp_container_sync:
+  file_name: run-pulp-container-sync.yml
+  trigger:
+    workflow_dispatch: []
+  workflow_type: playbook
+  concurrency_group: pulp
+
 github_run_overcloud_service_deploy:
   file_name: run-overcloud-service-deploy.yml
   trigger:
@@ -211,7 +219,6 @@ github_run_seed_host_package_update:
     workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
   concurrency_group: seed
-
 
 github_run_seed_hypervisor_host_configure:
   file_name: run-seed-hypervisor-host-configure.yml
