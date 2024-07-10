@@ -17,7 +17,7 @@ github_image_name: kayobe
 
 github_image_tag: !unsafe "${{ needs.prepare-runner.outputs.openstack_release }}-latest"
 
-github_kayobe_base_image: "quay.io/centos/centos:stream8"
+github_kayobe_base_image: "quay.io/rockylinux/rockylinux:9"
 
 github_kayobe_arguments: {}
 
