@@ -74,8 +74,8 @@ jobs:
         run: |
           cat /tmp/kayobe-config-diff
       
-      - name: Build artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
          name: config-diff-artifacts
          path: |
