@@ -73,6 +73,15 @@ jobs:
       - name: Print diff
         run: |
           cat /tmp/kayobe-config-diff
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+         name: config-diff-artifacts
+         path: |
+           /tmp/kayobe-config-diff
+           /tmp/target-kayobe.log
+           /tmp/source-kayobe.log
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%
 <% endif %>
