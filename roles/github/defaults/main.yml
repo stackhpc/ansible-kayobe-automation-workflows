@@ -81,6 +81,7 @@ github_workflows:
   - "{{ github_run_network_connectivity_check }}"
   - "{{ github_run_overcloud_container_image_pull }}"
   - "{{ github_run_overcloud_database_backup }}"
+  - "{{ github_run_overcloud_database_recover }}"
   - "{{ github_run_overcloud_host_configure }}"
   - "{{ github_run_overcloud_host_package_update }}"
   - "{{ github_run_overcloud_inventory_discover }}"
@@ -151,6 +152,13 @@ github_run_overcloud_container_image_pull:
 
 github_run_overcloud_database_backup:
   file_name: run-overcloud-database-backup.yml
+  trigger:
+    workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
+  arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
+  concurrency_group: overcloud
+
+github_run_overcloud_database_recover:
+  file_name: overcloud-database-recover.yml
   trigger:
     workflow_dispatch: ["{{ github_kolla_dispatch_inputs }}", "{{ github_kayobe_dispatch_inputs }}"]
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}"]
