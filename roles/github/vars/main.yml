@@ -19,7 +19,7 @@ github_default_kayobe_arguments:
   KAYOBE_AUTOMATION_PR_TYPE: github
   KAYOBE_AUTOMATION_PR_TITLE: !unsafe "[kayobe-automation] ${{ github.workflow }} #${{ github.run_id }}"
   KAYOBE_AUTOMATION_PR_URL: !unsafe https://api.github.com/repos/${{ github.repository }}/pulls
-  KAYOBE_AUTOMATION_TEMPEST_LOADLIST: !unsafe "${{ github.event.inputs.test_suite }}"
+  KAYOBE_AUTOMATION_TEMPEST_LOADLIST: !unsafe "${{ inputs.run_previous_failed == false && github.event.inputs.test_suite || 'previous-failed-tests' }}"
   TEMPEST_PATTERN: !unsafe "${{ github.event.inputs.tempest_pattern }}"
   TEMPEST_OPENRC: !unsafe "${{ secrets.TEMPEST_OPENRC }}"
   HOME: /stack

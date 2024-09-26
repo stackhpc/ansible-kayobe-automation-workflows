@@ -19,6 +19,7 @@ jobs:
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
     permissions:
+      actions: read
       contents: read
       packages: %% 'read' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
     container:
@@ -44,10 +45,43 @@ jobs:
       - name: Symlink source checkout to expected location
         run: sudo ln -s $PWD/kayobe-config /src
 
+      - name: Get Previous Workflow Run
+        uses: actions/github-script@v6
+        id: get_previous_run
+        if: ${{ inputs.run_previous_failed }}
+        with:
+          script: |
+            let result = ${{ inputs.previous_workflow_id || 0 }};
+            const workflow_id = 'run-tempest.yml';
+            if (result <= 0) {
+              const { data: response } = await github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id,
+                per_page: 2,
+              });
+              result = response.workflow_runs[1].id;
+            }
+            return result;
+          result-encoding: string
+
+      - name: Download previous Tempest test artifacts
+        uses: actions/download-artifact@v4
+        id: previous_artifacts
+        if: ${{ inputs.run_previous_failed }}
+        with:
+          name: tempest-artifacts
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.get_previous_run.outputs.result }}
+
+      - name: Symlink failed tests
+        if: ${{ inputs.run_previous_failed }}
+        run: sudo ln -s ${{ steps.previous_artifacts.outputs.download-path }}/failed-tests /src/.automation.conf/tempest/load-lists/previous-failed-tests
+
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
 <% endif %>
-      - name: Run ${{ github.event.inputs.test_suite }} tempest testsuite
+      - name: Run ${{ inputs.run_previous_failed == false && github.event.inputs.test_suite || 'previous failed tests' }} tempest testsuite
         run: |
           /src/.automation/pipeline/tempest.sh -e ansible_user=stack
         env:
