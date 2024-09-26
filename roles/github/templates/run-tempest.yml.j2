@@ -19,8 +19,10 @@ jobs:
   %% format_file_name(workflow.file_name) %%:
     runs-on: %% github_runs_on %%
     permissions:
+      actions: read
       contents: read
       packages: %% 'read' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
+      checks: write
     container:
       image: %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
@@ -44,10 +46,43 @@ jobs:
       - name: Symlink source checkout to expected location
         run: sudo ln -s $PWD/kayobe-config /src
 
+      - name: Get Previous Workflow Run
+        uses: actions/github-script@v6
+        id: get_previous_run
+        if: ${{ inputs.run_previous_failed }}
+        with:
+          script: |
+            let result = ${{ inputs.previous_workflow_id || 0 }};
+            const workflow_id = 'run-tempest.yml';
+            if (result <= 0) {
+              const { data: response } = await github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id,
+                per_page: 2,
+              });
+              result = response.workflow_runs[1].id;
+            }
+            return result;
+          result-encoding: string
+
+      - name: Download previous Tempest test artifacts
+        uses: actions/download-artifact@v4
+        id: previous_artifacts
+        if: ${{ inputs.run_previous_failed }}
+        with:
+          name: tempest-artifacts
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.get_previous_run.outputs.result }}
+
+      - name: Symlink failed tests
+        if: ${{ inputs.run_previous_failed }}
+        run: sudo ln -s ${{ steps.previous_artifacts.outputs.download-path }}/failed-tests /src/.automation.conf/tempest/load-lists/previous-failed-tests
+
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
 <% endif %>
-      - name: Run ${{ github.event.inputs.test_suite }} tempest testsuite
+      - name: Run ${{ inputs.run_previous_failed == false && github.event.inputs.test_suite || 'previous failed tests' }} tempest testsuite
         run: |
           /src/.automation/pipeline/tempest.sh -e ansible_user=stack
         env:
@@ -56,7 +91,7 @@ jobs:
 <% endif %>
           KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
           KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
-          KAYOBE_AUTOMATION_TEMPEST_LOADLIST: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST) %%'
+          KAYOBE_AUTOMATION_TEMPEST_LOADLIST: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST) %%"
           TEMPEST_PATTERN: '%% github_kayobe_arguments.TEMPEST_PATTERN | default(github_default_kayobe_arguments.TEMPEST_PATTERN) %%'
           TEMPEST_OPENRC: "%% github_kayobe_arguments.TEMPEST_OPENRC | default(github_default_kayobe_arguments.TEMPEST_OPENRC) %%"
           HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
@@ -79,3 +114,10 @@ jobs:
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%
 <% endif %>
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@db71d41eb79864e25ab0337e395c352e84523afe # v4.3.1
+        if: success() || failure()
+        with:
+          report_paths: /stack/tempest-artifacts/rally-junit.xml
+          check_name: Tempest Test Report ${{ github.run_id }} @ ${{ github.run_attempt }}
