@@ -24,7 +24,7 @@ jobs:
     <%- endif +%>
     runs-on: %% github_runs_on %%
     container:
-      image: docker:%% github_docker_container_version %%
+      image: docker:%% github_docker_image_version %%
     permissions:
       contents: read
       packages: %% 'write' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
