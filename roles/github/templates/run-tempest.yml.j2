@@ -22,6 +22,7 @@ jobs:
       actions: read
       contents: read
       packages: %% 'read' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
+      checks: write
     container:
       image: %% github_registry.url | default(github_default_registry.url) %%/%% github_image_name %%:%% github_image_tag %%
       credentials:
@@ -113,3 +114,10 @@ jobs:
 <% if github_final_hook | length >= 1 +%>
       %% github_final_hook | indent(width=6, first=false) -%%
 <% endif %>
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure()
+        with:
+          report_paths: /stack/tempest-artifacts/rally-junit.xml
+          check_name: Tempest Test Report ${{ github.run_id }} @ ${{ github.run_attempt }}
