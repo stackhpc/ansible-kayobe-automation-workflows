@@ -91,7 +91,7 @@ jobs:
 <% endif %>
           KAYOBE_VAULT_PASSWORD: "%% github_kayobe_arguments.KAYOBE_VAULT_PASSWORD | default(github_default_kayobe_arguments.KAYOBE_VAULT_PASSWORD) %%"
           KAYOBE_AUTOMATION_SSH_PRIVATE_KEY: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_SSH_PRIVATE_KEY) %%"
-          KAYOBE_AUTOMATION_TEMPEST_LOADLIST: '%% github_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST) %%'
+          KAYOBE_AUTOMATION_TEMPEST_LOADLIST: "%% github_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST | default(github_default_kayobe_arguments.KAYOBE_AUTOMATION_TEMPEST_LOADLIST) %%"
           TEMPEST_PATTERN: '%% github_kayobe_arguments.TEMPEST_PATTERN | default(github_default_kayobe_arguments.TEMPEST_PATTERN) %%'
           TEMPEST_OPENRC: "%% github_kayobe_arguments.TEMPEST_OPENRC | default(github_default_kayobe_arguments.TEMPEST_OPENRC) %%"
           HOME: '%% github_kayobe_arguments.HOME | default(github_default_kayobe_arguments.HOME) %%'
