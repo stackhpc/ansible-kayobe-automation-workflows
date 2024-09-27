@@ -11,6 +11,8 @@
 
 <% if workflow.use_bespoke is true %>
   <%- extends workflow.file_name + ".j2" | string +%>
+<% elif workflow.workflow_type is defined and workflow.workflow_type == "playbook" %>
+  <%- extends "run-playbook.yml.j2" +%>
 <% else %>
   <%- extends "generic.yml.j2" +%>
 <% endif %>

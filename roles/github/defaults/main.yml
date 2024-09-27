@@ -71,13 +71,13 @@ github_kayobe_environment_input: |
   {%- endif -%}
 
 github_workflows:
-  - "{{ github_prepare_runner }}"
   - "{{ github_build_kayobe_image }}"
-  - "{{ github_run_kolla_config_diff }}"
+  - "{{ github_prepare_runner }}"
   - "{{ github_run_infra_vm_host_configure }}"
   - "{{ github_run_infra_vm_host_package_update }}"
   - "{{ github_run_infra_vm_provision }}"
   - "{{ github_run_infra_vm_service_deploy }}"
+  - "{{ github_run_kolla_config_diff }}"
   - "{{ github_run_network_connectivity_check }}"
   - "{{ github_run_overcloud_container_image_pull }}"
   - "{{ github_run_overcloud_database_backup }}"
@@ -88,6 +88,7 @@ github_workflows:
   - "{{ github_run_overcloud_provision }}"
   - "{{ github_run_overcloud_service_deploy }}"
   - "{{ github_run_overcloud_service_upgrade }}"
+  - "{{ github_run_pulp_container_sync }}"
   - "{{ github_run_seed_host_configure }}"
   - "{{ github_run_seed_host_package_update }}"
   - "{{ github_run_seed_hypervisor_host_configure }}"
@@ -96,16 +97,12 @@ github_workflows:
   - "{{ github_run_seed_vm_provision }}"
   - "{{ github_run_tempest }}"
 
-github_prepare_runner:
-  file_name: prepare-runner.yml
-  use_bespoke: true
-
 github_build_kayobe_image:
   file_name: build-kayobe-docker-image.yml
   use_bespoke: true
 
-github_run_kolla_config_diff:
-  file_name: run-config-diff.yml
+github_prepare_runner:
+  file_name: prepare-runner.yml
   use_bespoke: true
 
 github_run_infra_vm_host_configure:
@@ -135,6 +132,10 @@ github_run_infra_vm_service_deploy:
     workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
   concurrency_group: infra
+
+github_run_kolla_config_diff:
+  file_name: run-config-diff.yml
+  use_bespoke: true
 
 github_run_network_connectivity_check:
   file_name: run-network-connectivity-check.yml
@@ -206,6 +207,13 @@ github_run_overcloud_service_upgrade:
   arguments: ["{{ github_kayobe_task_arguments }}", "{{ github_kolla_task_arguments }}", "{{ github_kayobe_pull_request_arguments }}"]
   concurrency_group: overcloud
 
+github_run_pulp_container_sync:
+  file_name: run-pulp-container-sync.yml
+  trigger:
+    workflow_dispatch: []
+  workflow_type: playbook
+  concurrency_group: pulp
+
 github_run_seed_host_configure:
   file_name: run-seed-host-configure.yml
   trigger:
@@ -219,7 +227,6 @@ github_run_seed_host_package_update:
     workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
   concurrency_group: seed
-
 
 github_run_seed_hypervisor_host_configure:
   file_name: run-seed-hypervisor-host-configure.yml
