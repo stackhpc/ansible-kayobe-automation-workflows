@@ -42,22 +42,22 @@ github_tempest_test_suites: |
 github_kayobe_limit_input: |
   kayobe_limit:
     description: |
-      The ansible limit to use when running kayobe playbooks.
+      --limit
 
 github_kayobe_tags_input: |
   kayobe_tags:
     description: |
-      The ansible tags to use when running kayobe playbooks.
+      --tags
 
 github_kolla_limit_input: |
   kolla_limit:
     description: |
-      The ansible limit to use for kolla-ansible playbooks.
+      --kolla-limit
 
 github_kolla_tags_input: |
   kolla_tags:
     description: |
-      The ansible tags to use when running kolla-ansible playbooks.
+      --kolla-tags
 
 github_kayobe_environment_input: |
   {%- if github_environment_selector == 'input' -%}
