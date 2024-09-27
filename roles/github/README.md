@@ -15,6 +15,7 @@ See the table below for a full list of all the currently supported kayobe automa
 | **run-network-connectivity-check** | Execute a network connectivity check to ensure all hosts are reachable and can reach `nc_external_ip ` & `nc_external_hostname`. |
 | **run-overcloud-container-image-pull** | Pull container images from a container registry. |
 | **run-overcloud-database-backup** | Perform a backup of the database used by the overcloud. |
+| **run-overcloud-database-recover** | Recover the database used by the overcloud. |
 | **run-overcloud-host-configure** | Perform an overcloud host configure. |
 | **run-overcloud-host-package-update** | Perform an overcloud host package update. |
 | **run-overcloud-inventory-discover** | Get an inventory of nodes. |
