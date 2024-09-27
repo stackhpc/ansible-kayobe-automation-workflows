@@ -19,7 +19,7 @@ jobs:
       openstack_release: ${{ steps.openstack_release.outputs.openstack_release }}
     steps:
       - name: Checkout kayobe config
-        uses: actions/checkout@v3
+        uses: actions/checkout@%% github_actions_checkout_version %%
 
       - name: Extract OpenStack Release
         id: openstack_release

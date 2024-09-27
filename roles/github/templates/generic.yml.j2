@@ -36,7 +36,7 @@ jobs:
       %% github_checkout_hook | indent(width=6, first=false) %%
 <% endif %>
       - name: Checkout kayobe config
-        uses: actions/checkout@v3
+        uses: actions/checkout@%% github_actions_checkout_version %%
         with:
           submodules: true
           path: kayobe-config

@@ -41,7 +41,7 @@ jobs:
       %% github_checkout_hook | indent(width=6, first=false) %%
 <% endif %>
       - name: Checkout kayobe config
-        uses: actions/checkout@v3
+        uses: actions/checkout@%% github_actions_checkout_version %%
         with:
            submodules: true
            path: kayobe-config
@@ -75,7 +75,7 @@ jobs:
           cat /tmp/kayobe-config-diff
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@%% github_actions_upload_artifact_version %%
         with:
          name: config-diff-artifacts
          path: |

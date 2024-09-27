@@ -24,7 +24,7 @@ jobs:
     <%- endif +%>
     runs-on: %% github_runs_on %%
     container:
-      image: docker:24.0-git
+      image: docker:%% github_docker_image_version %%
     permissions:
       contents: read
       packages: %% 'write' if (github_registry.url | default(github_default_registry.url)) == 'ghcr.io' else 'none' %%
@@ -34,13 +34,13 @@ jobs:
       %% github_checkout_hook | indent(width=6, first=false) %%
 <% endif %>
       - name: Checkout kayobe config
-        uses: actions/checkout@v3
+        uses: actions/checkout@%% github_actions_checkout_version %%
         with:
            submodules: true
            path: docker-image-build
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@%% github_docker_login_action_version %%
         with:
           registry: %% github_registry.url | default(github_default_registry.url) %%
           username: %% github_registry.username | default(github_default_registry.username) %%
@@ -48,22 +48,22 @@ jobs:
 
 <% if github_buildx_enabled %>
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@%% github_docker_setup_buildx_action_version %%
         with:
           driver-opts: |
-            image=moby/buildkit:v0.12.1
+            image=moby/buildkit:%% github_buildkit_image_version %%
 <% if github_buildx_inline_config | length >= 1 %>
           config-inline: |
             %% github_buildx_inline_config | indent(12) | trim %%
 <% endif %>
-          version: v0.11.2
+          version: %% github_buildx_version %%
 
 <% endif %>
 <% if github_kayobe_hook | length >= 1 %>
       %% github_kayobe_hook | indent(width=6, first=false) %%
 <% endif %>
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@%% github_docker_build_push_action_version %%
         with:
           file: ./docker-image-build/.automation/docker/kayobe/Dockerfile
           context: docker-image-build
