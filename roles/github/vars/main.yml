@@ -50,23 +50,13 @@ github_kayobe_pull_request_arguments:
   - KAYOBE_AUTOMATION_PR_URL
 
 github_docker_image_version: "27.3.1"
-
 github_actions_checkout_version: "v4.2.0"
-
 github_docker_login_action_version: "v3.3.0"
-
 github_docker_setup_buildx_action_version: "v3.6.1"
-
 github_buildkit_image_version: "v0.16.0"
-
 github_buildx_version: "v0.17.1"
-
 github_docker_build_push_action_version: "v6.7.0"
-
 github_actions_upload_artifact_version: "v4.4.0"
-
 github_actions_github_script_version: "v7.0.1"
-
 github_actions_download_artifact_version: "v4.1.8"
-
 github_mikepenz_action_junit_report_version: "db71d41eb79864e25ab0337e395c352e84523afe" # v4.3.1
