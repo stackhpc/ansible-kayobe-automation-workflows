@@ -35,6 +35,10 @@ github_buildx_enable_provenance: false
 
 github_timeout: 360
 
+github_default_octavia_certificates_expiry_time: 30
+
+github_octavia_certificates_schedule:
+
 github_tempest_test_suites: |
   - default
   - tempest-full
@@ -70,7 +74,18 @@ github_kayobe_environment_input: |
     options: {{ github_kayobe_environments }}
   {%- endif -%}
 
-github_workflows:
+github_octavia_certificates_input: |
+  expiry_time:
+    description: |
+      Check if the Octavia Amphora certificates will expire within this
+      number of days (integer).
+    type: string
+    required: true
+    default: '{{ github_default_octavia_certificates_expiry_time }}'
+
+github_workflows: "{{ github_workflows_default + github_workflows_extra }}"
+
+github_workflows_default:
   - "{{ github_prepare_runner }}"
   - "{{ github_build_kayobe_image }}"
   - "{{ github_run_kolla_config_diff }}"
@@ -95,6 +110,8 @@ github_workflows:
   - "{{ github_run_seed_service_deploy }}"
   - "{{ github_run_seed_vm_provision }}"
   - "{{ github_run_tempest }}"
+
+github_workflows_extra: []
 
 github_prepare_runner:
   file_name: prepare-runner.yml
@@ -135,6 +152,22 @@ github_run_infra_vm_service_deploy:
     workflow_dispatch: "{{ github_kayobe_dispatch_inputs }}"
   arguments: "{{ github_kayobe_task_arguments }}"
   concurrency_group: infra
+
+github_octavia_certificates_schedule_trigger:
+  schedule:
+    cron: "{{ github_octavia_certificates_schedule }}"
+
+github_octavia_certificates_workflow_dispatch_trigger:
+  workflow_dispatch: "{{ github_octavia_certificates_input }}"
+
+github_run_kolla_ansible_octavia_certificates:
+  file_name: run-kolla-ansible-octavia-certificates-check-expiry.yml
+  use_bespoke: true
+  expiry_time: "{{ github_default_octavia_certificates_expiry_time }}"
+  trigger: >-
+    {{ github_octavia_certificates_workflow_dispatch_trigger | combine(github_octavia_certificates_schedule_trigger)
+    if github_octavia_certificates_schedule else github_octavia_certificates_workflow_dispatch_trigger }}
+  concurrency_group: overcloud
 
 github_run_network_connectivity_check:
   file_name: run-network-connectivity-check.yml

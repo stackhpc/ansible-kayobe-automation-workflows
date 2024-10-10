@@ -76,6 +76,8 @@ github_buildx_inline_config: |
 
 `github_tempest_test_suites`: provide a list of load lists to be made available within the drop-down list for running tempest. Defaults to `default` and `tempest-full`.
 
+If you are using the workflow `github_run_kolla_ansible_octavia_certificates` to check for the expiry of Octavia Amphora certificates, by default it will allow for manual execution via workflow_dispatch. You can also have this run automatically on a schedule by setting `github_octavia_certificates_schedule` to a cron schedule. If you want to change the number of days checked, set the variable `github_default_octavia_certificates_expiry_time`.
+
 If you wish to make more impactful changes such as which workflows are built and what they contain then see the list of dictionaries called `workflows` in `defaults/main.yml`
 
 `github_workflows:` is a list of dictionaries that contains each of the workflows described above. A given list element is made up of the following:
@@ -92,7 +94,16 @@ If you wish to make more impactful changes such as which workflows are built and
 
 - `use_bespoke`: As mentioned in `path_override` some workflows require a more specific template to meet their needs. Setting this to true would create a workflow from a bespoke template if one exists within the roles `templates` directory. Note this is intended for **internal use only**.
 
-The following will override `github_workflows` to ensure only `Build Kayobe Image` and `Run Kolla Config Diff` is generated.
+By default, most workflows are built as they are part of the list `github_workflows_default`. If you want to add additional workflows, you can add them to the list `github_workflows_extra`.
+
+For example, you can set the following to additionally build `Run Kolla Ansible Octavia Certificates Check Expiry`.
+
+```yaml
+github_workflows_extra:
+  - "{{ github_run_kolla_ansible_octavia_certificates }}"
+```
+
+If you don't want to build all workflows, the following will override `github_workflows` to ensure only `Build Kayobe Image` and `Run Kolla Config Diff` are generated.
 
 ```yaml
 github_workflows:
