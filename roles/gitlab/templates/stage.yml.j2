@@ -1,0 +1,7 @@
+---
+{%- for job_name in gitlab_stages[stage].keys() +%}
+{%- if gitlab_stages[stage][job_name] +%}
+{{ job_name }}:
+  {{ gitlab_stages[stage][job_name] | indent(2) }}
+{%- endif -%}
+{%- endfor -%}

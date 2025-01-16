@@ -1,0 +1,6 @@
+---
+include:
+  - .gitlab/prelude.yml
+{% for stage in gitlab_stages.keys() %}
+  - .gitlab/{{ stage }}.yml
+{% endfor %}

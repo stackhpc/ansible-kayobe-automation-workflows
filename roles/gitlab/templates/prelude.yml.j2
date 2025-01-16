@@ -1,0 +1,131 @@
+---
+stages:
+{%- for stage in gitlab_stages.keys() +%}
+  - {{ stage }}
+{%- endfor +%}
+
+variables:
+{% if gitlab_kayobe_environments %}
+  KAYOBE_ENVIRONMENT:
+    value: {{ gitlab_kayobe_environments | first }}
+    description: "Name of environment to apply against"
+    options:
+{% for environment in gitlab_kayobe_environments %}
+      - {{ environment}}
+{% endfor %}
+{% endif %}
+  ACTIVE_STAGE:
+    value: overcloud
+    description: "Show only jobs belonging to the active stage"
+    options:
+      - all
+    {%- for stage in gitlab_stages.keys() +%}
+      - {{ stage }}
+    {%- endfor +%}
+  ACTIVE_JOB:
+    value: all
+    description: "Show either all jobs or just the job selected"
+    options:
+      - all
+    {%- for stage in gitlab_stages if stage not in gitlab_runbooks +%}
+    {%- for job in gitlab_stages[stage] +%}
+      - {{ job }}
+    {%- endfor +%}
+    {%- endfor +%}
+  KAYOBE_AUTOMATION_TEMPEST_LOADLIST:
+    value: "default"
+    description: "Name of tempest load list to use"
+    options:
+      {{ gitlab_tempest_test_suites | indent(6) | trim }}
+  KOLLA_TAGS:
+    value: ""
+    description: "List of tasks to limit when running kolla-ansible (-kt)"
+  KOLLA_LIMIT:
+    value: ""
+    description: "List of hosts or groups to limit when running kolla-ansible (-kl)"
+  KAYOBE_TAGS:
+    value: ""
+    description: "List of tags to limit when running kayobe (-t)"
+  KAYOBE_LIMIT:
+    value: ""
+    description: "List of hosts or groups to limit when running kayobe (-l)"
+  OPENSTACK_RELEASE:
+    value: {{ gitlab_openstack_release }}
+    description: "OpenStack release to deploy"
+  GIT_DEPTH: 0
+  GIT_SUBMODULE_STRATEGY: recursive
+
+default:
+  image: {{ gitlab_registry | default("$CI_REGISTRY") }}/kayobe:$OPENSTACK_RELEASE-latest
+  tags:
+    - kayobe
+    - openstack
+{% if gitlab_kayobe_environments | length > 1 %}
+    - $KAYOBE_ENVIRONMENT
+{% endif %}
+  id_tokens:
+    VAULT_AUTH_TOKEN:
+      aud: http://127.0.0.1:8200
+  before_script:
+    - |
+      # Workaround for lack of default variables: https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1867
+      # CI_COMMIT_BRANCH is not set for merge requests
+      if [ ! -z "$CI_COMMIT_BRANCH" ]; then
+        echo "Setting target branch to: $CI_COMMIT_BRANCH"
+        export KAYOBE_AUTOMATION_PR_TARGET_BRANCH="$CI_COMMIT_BRANCH"
+      elif [ ! -z "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ]; then
+        echo "Setting target branch to: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+        export KAYOBE_AUTOMATION_PR_TARGET_BRANCH="$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+      fi
+      echo $KAYOBE_AUTOMATION_TEMPEST_LOADLIST
+      export KAYOBE_ENVIRONMENT=$KAYOBE_ENVIRONMENT
+      export TEMPEST_OPENRC=$TEMPEST_OPENRC
+      export KAYOBE_AUTOMATION_TEMPEST_LOADLIST=$KAYOBE_AUTOMATION_TEMPEST_LOADLIST
+    - >-
+      export BAO_TOKEN=$(curl --silent --request POST
+      --data '{"role": "gitlab", "jwt": "'"$VAULT_AUTH_TOKEN"'"}'
+      http://127.0.0.1:8200/v1/auth/jwt/login | jq -r '.auth.client_token')
+
+.kayobe_automation_ssh_private_key: &kayobe_automation_ssh_private_key
+  - >-
+    export KAYOBE_AUTOMATION_SSH_PRIVATE_KEY=$(curl
+    --silent
+    --header "X-Vault-Token: $BAO_TOKEN"
+    --request GET http://127.0.0.1:8200/v1/kayobe-automation/$KAYOBE_ENVIRONMENT | jq -r '.data.kayobe_automation_ssh_private_key')
+
+.kayobe_vault_password: &kayobe_vault_password
+  - >-
+    export KAYOBE_VAULT_PASSWORD=$(curl
+    --silent
+    --header "X-Vault-Token: $BAO_TOKEN"
+    --request GET http://127.0.0.1:8200/v1/kayobe-automation/$KAYOBE_ENVIRONMENT | jq -r '.data.kayobe_vault_password')
+
+.get_secrets: &get_secrets
+  script:
+    - *kayobe_automation_ssh_private_key
+    - *kayobe_vault_password
+
+.kayobe_public_openrc: &kayobe_public_openrc
+  script: >-
+    source <(curl
+    --silent
+    --header "X-Vault-Token: $BAO_TOKEN"
+    --request GET http://127.0.0.1:8200/v1/kayobe-automation/$KAYOBE_ENVIRONMENT | jq -r '.data.kayobe_public_openrc')
+
+.tempest_openrc: &tempest_openrc
+  script: >-
+    export TEMPEST_OPENRC=$(curl
+    --silent
+    --header "X-Vault-Token: $BAO_TOKEN"
+    --request GET http://127.0.0.1:8200/v1/kayobe-automation/$KAYOBE_ENVIRONMENT | jq -r '.data.kayobe_public_openrc')
+
+.active_stage_web_rule: &active_stage_web_rule
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && 
+          ($ACTIVE_STAGE == $CI_JOB_STAGE || $ACTIVE_STAGE == "all") &&
+          ($ACTIVE_JOB == $CI_JOB_NAME || $ACTIVE_JOB == "all")
+      when: manual
+
+.active_stage_web_rule_no_manual: &active_stage_web_rule_no_manual
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $ACTIVE_STAGE == $CI_JOB_STAGE || $ACTIVE_STAGE == "all"

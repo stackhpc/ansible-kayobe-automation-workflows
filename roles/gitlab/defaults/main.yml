@@ -1,0 +1,638 @@
+---
+gitlab_output_directory: output
+
+gitlab_kayobe_environments:
+  - test
+  - production
+
+gitlab_registry: "10.21.16.1:80"
+
+gitlab_image_name: kayobe
+
+gitlab_image_tag: "$OPENSTACK_RELEASE-latest"
+
+gitlab_kayobe_base_image: "quay.io/rockylinux/rockylinux:9"
+
+gitlab_tempest_test_suites: |
+  - default
+  - tempest-full
+
+gitlab_openstack_release: "2024.1"
+
+gitlab_stages: "{{ gitlab_default_stages | combine(gitlab_extra_stages) | combine(gitlab_runbooks) }}"
+
+gitlab_default_stages:
+  build:
+    "{{ gitlab_stage_build }}"
+  infra-vm:
+    "{{ gitlab_stage_infra_vm }}"
+  merge-request:
+    "{{ gitlab_stage_merge_request }}"
+  network:
+    "{{ gitlab_stage_network }}"
+  overcloud:
+    "{{ gitlab_stage_overcloud }}"
+  seed:
+    "{{ gitlab_stage_seed }}"
+  tempest:
+    "{{ gitlab_stage_tempest }}"
+
+gitlab_extra_stages: {}
+
+gitlab_runbooks: "{{ gitlab_default_runbooks | combine(gitlab_extra_runbooks) }}"
+
+gitlab_default_runbooks:
+  runbook-overcloud-service-upgrade:
+    "{{ gitlab_runbook_overcloud_service_upgrade }}"
+  runbook-in-place-hypervisor-host-upgrade:
+    "{{ gitlab_runbook_in_place_hypervisor_host_upgrade }}"
+
+gitlab_extra_runbooks: {}
+
+gitlab_stage_build: "{{ gitlab_stage_build_default | combine(gitlab_stage_build_extra) }}"
+
+gitlab_stage_build_default:
+  build_kayobe_image: "{{ gitlab_build_kayobe_image }}"
+
+gitlab_stage_build_extra: []
+
+gitlab_build_kayobe_image: |
+  image: docker:{{ gitlab_docker_image_version }}
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: build
+  script:
+    - DOCKER_BUILDKIT=1 docker build --build-arg BASE_IMAGE="{{ gitlab_kayobe_base_image }}" --network=host --cache-from
+      {{ gitlab_registry | default("$CI_REGISTRY") }}/kayobe:$OPENSTACK_RELEASE-latest -f .automation/docker/kayobe/Dockerfile -t
+      {{ gitlab_registry | default("$CI_REGISTRY") }}/kayobe:$CI_COMMIT_SHA
+      -t {{ gitlab_registry | default("$CI_REGISTRY") }}/kayobe:$OPENSTACK_RELEASE-latest .
+    - docker image push --all-tags {{ gitlab_registry | default("$CI_REGISTRY") }}/kayobe
+  allow_failure: true
+
+gitlab_stage_infra_vm: "{{ gitlab_stage_infra_vm_default | combine(gitlab_stage_infra_vm_extra) }}"
+
+gitlab_stage_infra_vm_default:
+  infra_vm_host_configure: "{{ gitlab_infra_vm_host_configure }}"
+  infra_vm_host_package_update: "{{ gitlab_infra_vm_host_package_update }}"
+  infra_vm_provision: "{{ gitlab_infra_vm_provision }}"
+  infra_vm_service_deploy: "{{ gitlab_infra_vm_service_deploy }}"
+
+gitlab_stage_infra_vm_extra: []
+
+gitlab_infra_vm_host_configure: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: infra-vm
+  resource_group: infra-vm
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/infra-vm-host-configure.sh
+  allow_failure: true
+
+gitlab_infra_vm_host_package_update: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: infra-vm
+  resource_group: infra-vm
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/infra-vm-host-configure.sh
+  allow_failure: true
+
+gitlab_infra_vm_provision: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: infra-vm
+  resource_group: infra-vm
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/infra-vm-provision.sh
+  allow_failure: true
+
+gitlab_infra_vm_service_deploy: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: infra-vm
+  resource_group: infra-vm
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/infra-vm-service-deploy.sh
+  allow_failure: true
+
+gitlab_stage_merge_request: "{{ gitlab_stage_merge_request_default | combine(gitlab_stage_merge_request_extra) }}"
+
+gitlab_stage_merge_request_default:
+  kolla_diff: "{{ gitlab_merge_request_kolla_diff }}"
+
+gitlab_stage_merge_request_extra: []
+
+gitlab_merge_request_kolla_diff: |
+  stage: merge-request
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+  parallel:
+    matrix:
+      - KAYOBE_ENVIRONMENT: [production, test]
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/config-diff.sh origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+  artifacts:
+    when: always
+    paths:
+      - /tmp/kayobe-config-diff
+      - /tmp/target-kayobe.log
+      - /tmp/source-kayobe.log
+
+gitlab_stage_network: "{{ gitlab_stage_network_default | combine(gitlab_stage_network_extra) }}"
+
+gitlab_stage_network_default:
+  connectivity_check: "{{ gitlab_network_connectivity_check }}"
+  physical_network_configure: "{{ gitlab_network_physical_network_configure }}"
+
+gitlab_stage_network_extra: []
+
+gitlab_network_connectivity_check: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: network
+  resource_group: network
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/network-connectivity-check.sh
+  allow_failure: true
+
+gitlab_network_physical_network_configure: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: network
+  resource_group: network
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/physical-network-configure.sh
+  allow_failure: true
+
+gitlab_stage_overcloud: "{{ gitlab_stage_overcloud_default | combine(gitlab_stage_overcloud_extra) }}"
+
+gitlab_stage_overcloud_default:
+  overcloud_container_image_build: "{{ gitlab_overcloud_container_image_build }}"
+  overcloud_container_image_pull: "{{ gitlab_overcloud_container_image_pull }}"
+  overcloud_database_backup: "{{ gitlab_overcloud_database_backup }}"
+  overcloud_database_recover: "{{ gitlab_overcloud_database_recover }}"
+  overcloud_deployment_image_build: "{{ gitlab_overcloud_deployment_image_build }}"
+  overcloud_host_command_run: "{{ gitlab_overcloud_host_command_run }}"
+  overcloud_host_configure: "{{ gitlab_overcloud_host_configure }}"
+  overcloud_host_image_build: "{{ gitlab_overcloud_host_image_build }}"
+  overcloud_host_package_update: "{{ gitlab_overcloud_host_package_update }}"
+  overcloud_host_upgrade: "{{ gitlab_overcloud_host_upgrade }}"
+  overcloud_inventory_discover: "{{ gitlab_overcloud_inventory_discover }}"
+  overcloud_provision: "{{ gitlab_overcloud_provision }}"
+  overcloud_prune_docker_images: "{{ gitlab_overcloud_prune_docker_images }}"
+  overcloud_service_configuration_generate: "{{ gitlab_overcloud_service_configuration_generate }}"
+  overcloud_service_deploy: "{{ gitlab_overcloud_service_deploy }}"
+  overcloud_service_reconfigure: "{{ gitlab_overcloud_service_reconfigure }}"
+  overcloud_service_upgrade: "{{ gitlab_overcloud_service_upgrade }}"
+
+gitlab_stage_overcloud_extra: []
+
+gitlab_overcloud_container_image_build: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-container-image-build.sh
+  allow_failure: true
+
+gitlab_overcloud_container_image_pull: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-container-image-pull.sh
+  allow_failure: true
+
+gitlab_overcloud_database_backup: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-database-backup.sh
+  allow_failure: true
+
+gitlab_overcloud_database_recover: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-database-recover.sh
+  allow_failure: true
+
+gitlab_overcloud_deployment_image_build: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-deployment-image-build.sh
+  allow_failure: true
+
+gitlab_overcloud_host_command_run: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-host-command-run.sh
+  allow_failure: true
+
+gitlab_overcloud_host_configure: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-host-configure.sh
+  allow_failure: true
+
+gitlab_overcloud_host_image_build: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-host-image-build.sh
+  allow_failure: true
+
+gitlab_overcloud_host_package_update: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-host-package-update.sh
+  allow_failure: true
+
+gitlab_overcloud_host_upgrade: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-host-upgrade.sh
+  allow_failure: true
+
+gitlab_overcloud_inventory_discover: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-inventory-discover.sh
+  allow_failure: true
+
+gitlab_overcloud_provision: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-provision.sh
+  allow_failure: true
+
+gitlab_overcloud_prune_docker_images: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-host-command-run.sh -b --command "docker image prune -a -f" --show-output
+  allow_failure: true
+
+gitlab_overcloud_service_configuration_generate: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-service-configuration-generate.sh /tmp/kolla
+  allow_failure: true
+
+gitlab_overcloud_service_deploy: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-service-deploy.sh
+  allow_failure: true
+
+gitlab_overcloud_service_reconfigure: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-service-reconfigure.sh
+  allow_failure: true
+
+gitlab_overcloud_service_upgrade: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: overcloud
+  resource_group: overcloud
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/overcloud-service-upgrade.sh
+  allow_failure: true
+
+gitlab_stage_seed: "{{ gitlab_stage_seed_default | combine(gitlab_stage_seed_extra) }}"
+
+gitlab_stage_seed_default:
+  seed_container_image_build: "{{ gitlab_seed_container_image_build }}"
+  seed_host_configure: "{{ gitlab_seed_host_configure }}"
+  seed_host_package_update: "{{ gitlab_seed_host_package_update }}"
+  seed_hypervisor_host_configure: "{{ gitlab_seed_hypervisor_host_configure }}"
+  seed_hypervisor_host_package_update: "{{ gitlab_seed_hypervisor_host_package_update }}"
+  seed_service_deploy: "{{ gitlab_seed_service_deploy }}"
+  seed_vm_provision: "{{ gitlab_seed_vm_provision }}"
+
+gitlab_stage_seed_extra: []
+
+gitlab_seed_container_image_build: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: seed
+  resource_group: seed
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/seed-container-image-build.sh
+  allow_failure: true
+
+gitlab_seed_host_configure: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: seed
+  resource_group: seed
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/seed-host-configure.sh
+  allow_failure: true
+
+gitlab_seed_host_package_update: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: seed
+  resource_group: seed
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/seed-host-package-update.sh
+  allow_failure: true
+
+gitlab_seed_hypervisor_host_configure: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: seed
+  resource_group: seed
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/seed-hypervisor-host-configure.sh
+  allow_failure: true
+
+gitlab_seed_hypervisor_host_package_update: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: seed
+  resource_group: seed
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/seed-hypervisor-host-package-update.sh
+  allow_failure: true
+
+gitlab_seed_service_deploy: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: seed
+  resource_group: seed
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/seed-service-deploy.sh
+  allow_failure: true
+
+gitlab_seed_vm_provision: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: seed
+  resource_group: seed
+  script:
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/seed-vm-provision.sh
+  allow_failure: true
+
+gitlab_stage_tempest: "{{ gitlab_stage_tempest_default | combine(gitlab_stage_tempest_extra) }}"
+
+gitlab_stage_tempest_default:
+  tempest_run: "{{ gitlab_tempest_run }}"
+
+gitlab_stage_tempest_extra: []
+
+gitlab_tempest_run: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE_JOB == 'tempest'
+      when: always
+  stage: tempest
+  resource_group: tempest
+  script:
+    - !reference [.get_secrets, script]
+    - !reference [.tempest_openrc, script]
+    - KAYOBE_AUTOMATION_TEMPEST_LOADLIST=${KAYOBE_AUTOMATION_TEMPEST_LOADLIST} .automation/pipeline/tempest.sh -e ansible_user=stack -e rally_force_pull=false
+    - mkdir ${CI_PROJECT_DIR}/artifacts
+    - cp $HOME/tempest-artifacts/* ${CI_PROJECT_DIR}/artifacts
+    - test $(wc -l < ${CI_PROJECT_DIR}/artifacts/failed-tests) -lt 1
+  artifacts:
+    when: always
+    paths:
+      - artifacts/rally-junit.xml
+      - artifacts/rally-verify-report.html
+      - artifacts/stderr.log
+      - artifacts/stdout.log
+      - artifacts/tempest.log
+    reports:
+      junit: artifacts/rally-junit.xml
+  allow_failure: true
+
+gitlab_runbook_overcloud_service_upgrade:
+  a_container_image_pull: "{{ gitlab_runbook_overcloud_service_upgrade_container_image_pull }}"
+  b_host_upgrade: "{{ gitlab_runbook_overcloud_service_upgrade_host_upgrade }}"
+  c_tempest_run_before: "{{ gitlab_runbook_overcloud_service_upgrade_tempest_run_before }}"
+  d_backup_database: "{{ gitlab_runbook_overcloud_service_upgrade_backup_database }}"
+  e_upgrade_overcloud_services: "{{ gitlab_runbook_overcloud_service_upgrade_upgrade_overcloud_services }}"
+  f_tempest_run_after: "{{ gitlab_runbook_overcloud_service_upgrade_tempest_run_after }}"
+  g_prune_docker_images: "{{ gitlab_runbook_overcloud_service_upgrade_prune_docker_images }}"
+
+gitlab_runbook_overcloud_service_upgrade_container_image_pull: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: overcloud
+  script:
+    - !reference [overcloud_container_image_pull, script]
+
+gitlab_runbook_overcloud_service_upgrade_host_upgrade: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  needs: [a_container_image_pull]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: overcloud
+  script:
+    - !reference [overcloud_host_upgrade, script]
+
+gitlab_runbook_overcloud_service_upgrade_tempest_run_before: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: tempest
+  needs: [b_host_upgrade]
+  script:
+    - !reference [tempest_run, script]
+  artifacts:
+    when: always
+    paths:
+      - artifacts/rally-junit.xml
+      - artifacts/rally-verify-report.html
+      - artifacts/stderr.log
+      - artifacts/stdout.log
+      - artifacts/tempest.log
+    reports:
+      junit: artifacts/rally-junit.xml
+  allow_failure: true
+
+gitlab_runbook_overcloud_service_upgrade_backup_database: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: overcloud
+  needs: [c_tempest_run_before]
+  script:
+    - !reference [overcloud_database_backup, script]
+
+gitlab_runbook_overcloud_service_upgrade_upgrade_overcloud_services: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: overcloud
+  needs: [d_backup_database]
+  script:
+    - !reference [overcloud_service_upgrade, script]
+
+gitlab_runbook_overcloud_service_upgrade_tempest_run_after: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: tempest
+  needs: [e_upgrade_overcloud_services]
+  script:
+    - !reference [tempest_run, script]
+  artifacts:
+    when: always
+    paths:
+      - artifacts/rally-junit.xml
+      - artifacts/rally-verify-report.html
+      - artifacts/stderr.log
+      - artifacts/stdout.log
+      - artifacts/tempest.log
+    reports:
+      junit: artifacts/rally-junit.xml
+  allow_failure: true
+
+gitlab_runbook_overcloud_service_upgrade_prune_docker_images: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: runbook-overcloud-service-upgrade
+  needs: [f_tempest_run_after]
+  script:
+    - !reference [overcloud_prune_docker_images, script]
+
+gitlab_runbook_in_place_hypervisor_host_upgrade:
+  a_disable_compute_services: "{{ gitlab_runbook_in_place_hypervisor_host_upgrade_disable_compute_services }}"
+  b_drain_hypervisor: "{{ gitlab_runbook_in_place_hypervisor_host_upgrade_drain_hypervisor }}"
+  c_update_hypervisor_packages: "{{ gitlab_runbook_in_place_hypervisor_host_upgrade_package_update }}"
+  d_reboot_hypervisor: "{{ gitlab_runbook_in_place_hypervisor_reboot_hypervisor }}"
+  e_enable_hypervisor: "{{ gitlab_runbook_in_place_hypervisor_host_upgrade_enable_hypervisor }}"
+
+gitlab_runbook_in_place_hypervisor_host_upgrade_disable_compute_services: |
+  rules:
+    - !reference [.active_stage_web_rule, rules]
+  stage: runbook-in-place-hypervisor-host-upgrade
+  resource_group: runbook-in-place-hypervisor-host-upgrade
+  script:
+    - !reference [.kayobe_public_openrc, script]
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/playbook-run.sh etc/kayobe/ansible/nova-compute-disable.yml
+  allow_failure: true
+
+gitlab_runbook_in_place_hypervisor_host_upgrade_drain_hypervisor: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-in-place-hypervisor-host-upgrade
+  resource_group: runbook-in-place-hypervisor-host-upgrade
+  needs: [disable_compute_services]
+  script:
+    - !reference [.kayobe_public_openrc, script]
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/playbook-run.sh etc/kayobe/ansible/nova-compute-disable.yml
+  allow_failure: true
+
+gitlab_runbook_in_place_hypervisor_host_upgrade_package_update: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-overcloud-service-upgrade
+  resource_group: runbook-overcloud-service-upgrade
+  needs: [b_drain_hypervisor]
+  script:
+    - !reference [overcloud_host_package_update, script]
+
+gitlab_runbook_in_place_hypervisor_reboot_hypervisor: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-in-place-hypervisor-host-upgrade
+  resource_group: runbook-in-place-hypervisor-host-upgrade
+  needs: [c_update_hypervisor_packages]
+  script:
+    - !reference [.kayobe_public_openrc, script]
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/playbook-run.sh etc/kayobe/ansible/reboot.yml
+  allow_failure: true
+
+gitlab_runbook_in_place_hypervisor_host_upgrade_enable_hypervisor: |
+  rules:
+    - !reference [.active_stage_web_rule_no_manual, rules]
+  stage: runbook-in-place-hypervisor-host-upgrade
+  resource_group: runbook-in-place-hypervisor-host-upgrade
+  needs: [d_reboot_hypervisor]
+  script:
+    - !reference [.kayobe_public_openrc, script]
+    - !reference [.get_secrets, script]
+    - .automation/pipeline/playbook-run.sh etc/kayobe/ansible/nova-compute-disable.yml
+  allow_failure: true
