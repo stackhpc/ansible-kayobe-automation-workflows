@@ -1,0 +1,32 @@
+---
+- name: Ensure output directory exists
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    mode: "755"
+  loop:
+    - "{{ gitlab_output_directory }}"
+    - "{{ gitlab_output_directory }}/.gitlab"
+
+- name: Ensure gitlab-ci.yml entry point exists
+  ansible.builtin.template:
+    src: "gitlab-ci.yml.j2"
+    dest: "{{ gitlab_output_directory }}/.gitlab-ci.yml"
+    mode: "0644"
+
+- name: Ensure prelude.yml exists
+  ansible.builtin.template:
+    src: "prelude.yml.j2"
+    dest: "{{ gitlab_output_directory }}/.gitlab/prelude.yml"
+    mode: "0644"
+
+- name: Ensure pipeline stage files exist
+  ansible.builtin.template:
+    src: "stage.yml.j2"
+    dest: "{{ gitlab_output_directory }}/.gitlab/{{ stage }}.yml"
+    mode: "0644"
+  vars:
+    current_stage: "{{ stage }}"
+  loop: "{{ gitlab_stages.keys() }}"
+  loop_control:
+    loop_var: stage
